@@ -22,11 +22,11 @@ func SetupRouter() *gin.Engine {
 
 	api := r.Group("/api")
 	{
+		api.POST("/form_post", formPost)
 
+		api.POST("/json_post", jsonPost)
 		api.POST("/urlencoded_post", urlencodedPost)
 		api.POST("/json_and_form_post", jsonAndFormPost)
-
-		api.POST("/form_post", formPost)
 		api.POST("/xml_post", xmlPost)
 		api.POST("/file_upload", fileUpload)
 

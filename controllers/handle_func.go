@@ -9,43 +9,9 @@ import (
 )
 
 type User struct {
-	Name    string `json:"name" form:"name"`
-	Message string `json:"message" form:"message"`
-	Nick    string `json:"nick" form:"nick"`
-}
-
-// application/x-www-form-urlencoded
-func urlencodedPost(c *gin.Context) {
-
-	name := c.Query("name")
-	message := c.PostForm("message")
-	nick := c.DefaultPostForm("nick", "1231412")
-
-	log.Println(name, message, nick)
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
-		"name":    name,
-		"message": message,
-		"nick":    nick,
-	})
-
-}
-
-// application/json  application/x-www-form-urlencoded
-func jsonAndFormPost(c *gin.Context) {
-	var user User
-
-	c.Bind(&user)
-
-	log.Println(user.Name, user.Message, user.Nick)
-
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
-		"name":    user.Name,
-		"message": user.Message,
-		"nick":    user.Nick,
-	})
-
+	Name    string `json:"name" form:"name" xml:"name"`
+	Message string `json:"message" form:"message" xml:"message"`
+	Nick    string `json:"nick" form:"nick" xml:"nick"`
 }
 
 // 表单提交
@@ -62,8 +28,66 @@ func formPost(c *gin.Context) {
 	})
 }
 
-func xmlPost(c *gin.Context) {
+// application/x-www-form-urlencoded
+func urlencodedPost(c *gin.Context) {
 
+	name := c.Query("name")
+	message := c.PostForm("message")
+	nick := c.DefaultPostForm("nick", "1231412")
+
+	log.Println(name, message, nick)
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"name":    name,
+		"message": message,
+		"nick":    nick,
+	})
+}
+
+func jsonPost(c *gin.Context) {
+	var user User
+
+	c.BindJSON(&user)
+
+	log.Println(user.Name, user.Message, user.Nick)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"name":    user.Name,
+		"message": user.Message,
+		"nick":    user.Nick,
+	})
+}
+
+// application/json  application/x-www-form-urlencoded
+func jsonAndFormPost(c *gin.Context) {
+	var user User
+
+	c.Bind(&user)
+
+	log.Println(user.Name, user.Message, user.Nick)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"name":    user.Name,
+		"message": user.Message,
+		"nick":    user.Nick,
+	})
+}
+
+func xmlPost(c *gin.Context) {
+	var user User
+
+	c.Bind(&user)
+
+	log.Println(user.Name, user.Message, user.Nick)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"name":    user.Name,
+		"message": user.Message,
+		"nick":    user.Nick,
+	})
 }
 
 func fileUpload(c *gin.Context) {
