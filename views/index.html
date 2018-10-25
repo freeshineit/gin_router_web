@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<!-- <script src="static/js/mserver.js"></script> -->
+	<style type="text/css">
+		.container {
+			width: 800px;
+			margin: 0 auto;
+			padding: 50px 0;
+		}
+
+		section {
+			margin-bottom: 50px;
+		}
+
+	</style>
+</head>
+<body>
+	<div class="container">
+		<section>
+			<!-- 成功 -->
+			<p>表单提交</p>
+			<form method="post" action="/api/form_post">
+				<input type="text" name="message">
+				<input type="text" name="nick">
+				<button type="submit">提交</button>
+			</form>
+		</section>
+		<section>
+			<p>post请求 `application/x-www-form-urlencoded`数据格式</p>
+			<button class='urlencoded'>x-www-form-urlencoded</button>
+			<div class="urlencoded-msg"><div>
+		</section>
+
+		<section>
+			<p>post请求 `application/json`数据格式</p>
+			<button class='json'>json</button>
+			<div class="json-msg"></div>
+		</section>
+		<section>
+			<p>post请求</p>
+			<p>不同数据格式请求同一个接口</p>
+			<button class='jsonandform'>jsonandform</button>
+			<div class="jsonandform-msg"></div>
+		</section>
+
+		<section>
+			<p>带参数的get请求</p>
+			<button class="list">list</button>
+			<div class="list-msg"></div>
+		</section>
+
+		<section>
+			<p>这个暂时还没搞通</p>
+			<button class="xml_post">xml_post</button>
+		</section>
+
+		<section>
+			<p>文件上传</p>
+			<div>
+				<form id="multipleForm">
+					<input type="file" name="file" id='file' multiple="multiple" accept="image/*">
+				</form>
+				<button class="file_upload">上传文件</button>
+			</div>
+			<div class="file_upload-msg"><div>
+		</section>
+	</div>
+	<script type="text/javascript">
+		(function () {
+
+			const data = {name: 'nihoadasdasdineshao', message: 'shiasdfasdneshao',nick: 'sdfas'}
+
+			$('.urlencoded').on('click', function() {
+				axios({
+			  		method: 'post',
+				  	url: '/api/urlencoded_post?name=shineshao',
+				  	headers: {
+				  		'Content-Type': 'application/x-www-form-urlencoded'
+				  	},
+				  	data: 'message=manu&nick=this_is_great'
+				}).then(res => {
+					console.log(res.data)
+					$('.urlencoded-msg').text(`success  ${new Date()}`)
+				})
+			})
+
+
+			$('.json').on('click', function() {
+
+				axios({
+			  		method: 'post',
+				  	url: '/api/json_and_form_post',
+				  	headers: {
+				  		'Content-Type': 'application/json'
+				  	},
+				  	data
+				}).then(res => {
+					console.log(res.data)
+					$('.json-msg').text(`success  ${new Date()}`)
+				})
+			})
+
+			$('.jsonandform').on('click', function() {
+
+				axios({
+			  		method: 'post',
+				  	url: '/api/json_and_form_post',
+				  	headers: {
+				  		'Content-Type': 'application/x-www-form-urlencoded'
+				  	},
+				  	data:'name=shine&message=manu&nick=this_is_great'
+				}).then(res => {
+					console.log(res.data)
+					$('.jsonandform-msg').text(`success ${new Date()}`)
+				})
+			})
+
+			$('.xml_post').on('click', function() {
+				alert('暂时不可用')
+			})
+
+
+			$('.file_upload').on('click', function () {
+
+				// 单个文件上传
+				// var fd = new FormData()
+				// var file = document.getElementById('file')
+				// fd.append('file', file.files[0])
+
+				axios({
+			  		method: 'post',
+				  	url: '/api/file_upload',
+				  	headers: {
+				  		'Content-Type': 'application/x-www-form-urlencoded'
+				  	},
+				  	// data:fd
+				  	data: new FormData($('#multipleForm')[0])
+
+				}).then(res => {
+					console.log(res.data)
+					const urls = res.data.url.split(';')
+					let imgHtml = '';
+
+					for(let i = 0; i < urls.length; i ++) {
+						imgHtml += `<img style="width: 200px" src="/${urls[i]}" />`
+					}
+
+					$('.file_upload-msg').html(`<div>success ${new Date()} 文件地址/${res.data.url} ${imgHtml}</div>`)
+				})
+			})
+
+			// 成功
+			$('.list').on('click', function() {
+				axios.get('/api/list',{
+					    params: {
+					    	message: 'message',
+					    	nick: 'shineshao'
+					    }
+					})
+					.then(res => {
+						console.log(res.data)
+						$('.list-msg').text(`success ${new Date()}`)
+					})
+			})
+
+		})();
+	</script>
+</body>
+</html>

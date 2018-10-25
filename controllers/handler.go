@@ -1,0 +1,46 @@
+package controllers
+
+import (
+	"github.com/gin-gonic/gin"
+	"net/http"
+)
+
+func setStaticFS(r *gin.Engine) {
+	r.LoadHTMLGlob("views/*")
+	r.StaticFS("/static", http.Dir("public/static"))
+	r.StaticFS("/upload", http.Dir("upload"))
+}
+
+func SetupRouter() *gin.Engine {
+	r := gin.Default()
+
+	setStaticFS(r) // 设置静态资源
+
+	r.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", nil)
+	})
+
+	api := r.Group("/api")
+	{
+
+		api.POST("/urlencoded_post", urlencodedPost)
+		api.POST("/json_and_form_post", jsonAndFormPost)
+
+		api.POST("/form_post", formPost)
+		api.POST("/xml_post", xmlPost)
+		api.POST("/file_upload", fileUpload)
+
+		api.GET("/list", func(c *gin.Context) {
+			message := c.Query("message")
+			nick := c.DefaultQuery("nick", "anonymous")
+
+			c.JSON(http.StatusOK, gin.H{
+				"status":  "posted",
+				"message": message,
+				"nick":    nick,
+			})
+		})
+	}
+
+	return r
+}
