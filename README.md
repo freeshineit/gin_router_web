@@ -1,6 +1,6 @@
 # gin_router_web
 
->	golang的简单快速的框架`gin`的路由配置及使用（主要是post方法）
+>	`gin`是简单快速的`golang`框架,这篇文章主要是介绍`gin`的路由配置及使用（主要是post方法）
 
 
 ## 静态资源配置
@@ -38,7 +38,7 @@ api := r.Group("/api")
 		nick := c.DefaultQuery("nick", "anonymous")
 
 		c.JSON(http.StatusOK, gin.H{
-			"status":  "posted",
+			"status":  "SUCCESS",
 			"message": message,
 			"nick":    nick,
 		})
@@ -76,7 +76,7 @@ func formPost(c *gin.Context) {
 
 	log.Println(message, nick)
 	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
+		"status":  "SUCCESS",
 		"message": message,
 		"nick":    nick,
 	})
@@ -114,7 +114,7 @@ func jsonPost(c *gin.Context) {
 	log.Println(user.Name, user.Message, user.Nick)
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
+		"status":  "SUCCESS",
 		"name":    user.Name,
 		"message": user.Message,
 		"nick":    user.Nick,
@@ -155,7 +155,7 @@ func urlencodedPost(c *gin.Context) {
 
 	log.Println(name, message, nick)
 	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
+		"status":  "SUCCESS",
 		"name":    name,
 		"message": message,
 		"nick":    nick,
@@ -211,7 +211,7 @@ func jsonAndFormPost(c *gin.Context) {
 	log.Println(user.Name, user.Message, user.Nick)
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
+		"status":  "SUCCESS",
 		"name":    user.Name,
 		"message": user.Message,
 		"nick":    user.Nick,
@@ -290,7 +290,7 @@ func xmlPost(c *gin.Context) {
 	log.Println(user.Name, user.Message, user.Nick)
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
+		"status":  "SUCCESS",
 		"name":    user.Name,
 		"message": user.Message,
 		"nick":    user.Nick,
