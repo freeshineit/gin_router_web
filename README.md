@@ -409,6 +409,8 @@ $('.file_upload').on('click', function () {
 })
 ```
 
+[官方文件上传demo](https://github.com/gin-gonic/gin/tree/master/examples/upload-file)
+
 
 [demo](https://github.com/freeshineit/gin_rotuer_web)
 
