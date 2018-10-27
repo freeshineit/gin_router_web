@@ -22,7 +22,7 @@ func formPost(c *gin.Context) {
 
 	log.Println(message, nick)
 	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
+		"status":  "SUCCESS",
 		"message": message,
 		"nick":    nick,
 	})
@@ -37,7 +37,7 @@ func urlencodedPost(c *gin.Context) {
 
 	log.Println(name, message, nick)
 	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
+		"status":  "SUCCESS",
 		"name":    name,
 		"message": message,
 		"nick":    nick,
@@ -52,7 +52,7 @@ func jsonPost(c *gin.Context) {
 	log.Println(user.Name, user.Message, user.Nick)
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
+		"status":  "SUCCESS",
 		"name":    user.Name,
 		"message": user.Message,
 		"nick":    user.Nick,
@@ -68,7 +68,7 @@ func jsonAndFormPost(c *gin.Context) {
 	log.Println(user.Name, user.Message, user.Nick)
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
+		"status":  "SUCCESS",
 		"name":    user.Name,
 		"message": user.Message,
 		"nick":    user.Nick,
@@ -83,7 +83,7 @@ func xmlPost(c *gin.Context) {
 	log.Println(user.Name, user.Message, user.Nick)
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":  "success",
+		"status":  "SUCCESS",
 		"name":    user.Name,
 		"message": user.Message,
 		"nick":    user.Nick,

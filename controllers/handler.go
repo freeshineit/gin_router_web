@@ -7,6 +7,8 @@ import (
 
 func setStaticFS(r *gin.Engine) {
 	r.LoadHTMLGlob("views/*")
+
+	r.StaticFile("favicon.ico", "./views/favicon.ico")
 	r.StaticFS("/static", http.Dir("public/static"))
 	r.StaticFS("/upload", http.Dir("upload"))
 }
@@ -35,7 +37,7 @@ func SetupRouter() *gin.Engine {
 			nick := c.DefaultQuery("nick", "anonymous")
 
 			c.JSON(http.StatusOK, gin.H{
-				"status":  "posted",
+				"status":  "SUCCESS",
 				"message": message,
 				"nick":    nick,
 			})
