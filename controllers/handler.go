@@ -22,6 +22,10 @@ func SetupRouter() *gin.Engine {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
 
+	r.GET("/upload", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "upload.html", nil)
+	})
+
 	api := r.Group("/api")
 	{
 		api.POST("/form_post", formPost)
@@ -31,6 +35,8 @@ func SetupRouter() *gin.Engine {
 		api.POST("/json_and_form_post", jsonAndFormPost)
 		api.POST("/xml_post", xmlPost)
 		api.POST("/file_upload", fileUpload)
+
+		api.POST("/file_chunk_upload", fileChunkUpload)
 
 		api.GET("/list", func(c *gin.Context) {
 			message := c.Query("message")

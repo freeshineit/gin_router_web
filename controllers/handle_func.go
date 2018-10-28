@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	// "bytes"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"strings"
@@ -96,6 +99,9 @@ func fileUpload(c *gin.Context) {
 
 	form, err := c.MultipartForm()
 
+	log.Println(c.Cookie("token"))
+	log.Println(c.GetHeader("Content-Type"))
+
 	if err != nil {
 		log.Println("postMultipleFile error: %s")
 	}
@@ -123,5 +129,64 @@ func fileUpload(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"state": "SUCCESS",
 		"url":   strings.Join(filesUrl, ";"),
+	})
+}
+
+type ChunkFile struct {
+	Name   string         `json:"name" form:"name"`
+	Chunk  int            `json:"chunk" form:"chunk"`
+	Chunks int            `json:"chunks" form:"chunks"`
+	File   multipart.File `json: "file" form:"file"`
+}
+
+func PathExists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
+}
+
+func fileChunkUpload(c *gin.Context) {
+
+	var chunkFile ChunkFile
+	r := c.Request
+	// var buff = make([]byte, 1024*200)
+
+	c.Bind(&chunkFile)
+
+	var Buf = make([]byte, 0)
+	// in your case file would be fileupload
+	file, _, _ := r.FormFile("file")
+
+	log.Println("this is file chunk", chunkFile.Chunk)
+
+	Buf, _ = ioutil.ReadAll(file)
+
+	bool, _ := PathExists(chunkFile.Name)
+
+	if !bool {
+		os.Create(chunkFile.Name)
+	}
+	fd, _ := os.OpenFile(chunkFile.Name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	buf := []byte(Buf)
+	fd.Write(buf)
+	fd.Close()
+
+	// if chunkFile.Chunk == 0 {
+	// 	// fd, _ :=os.Create(chunkFile.Name)
+	// 	// buf:=[]byte(Buf)
+	// 	// fd.Write(buf)
+	// 	// fd.Close()
+	// 	ioutil.WriteFile(chunkFile.Name, Buf, 0644)
+	// } else {
+
+	// }
+	//
+	c.JSON(http.StatusOK, gin.H{
+		"state": "SUCCESS",
 	})
 }
