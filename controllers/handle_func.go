@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	// "bytes"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
@@ -133,10 +132,10 @@ func fileUpload(c *gin.Context) {
 }
 
 type ChunkFile struct {
-	Name   string         `json:"name" form:"name"`
-	Chunk  int            `json:"chunk" form:"chunk"`
-	Chunks int            `json:"chunks" form:"chunks"`
-	File   multipart.File `json: "file" form:"file"`
+	Name   string                `json:"name" form:"name"`
+	Chunk  int                   `json:"chunk" form:"chunk"`
+	Chunks int                   `json:"chunks" form:"chunks"`
+	File   *multipart.FileHeader `json:"file" form:"file"`
 }
 
 func PathExists(path string) (bool, error) {
@@ -154,7 +153,6 @@ func fileChunkUpload(c *gin.Context) {
 
 	var chunkFile ChunkFile
 	r := c.Request
-	// var buff = make([]byte, 1024*200)
 
 	c.Bind(&chunkFile)
 
@@ -162,31 +160,29 @@ func fileChunkUpload(c *gin.Context) {
 	// in your case file would be fileupload
 	file, _, _ := r.FormFile("file")
 
-	log.Println("this is file chunk", chunkFile.Chunk)
-
+	//log.Println(reflect.TypeOf(chunkFile.File))
+	//log.Println(reflect.TypeOf(file))
+	log.Println("this is ", chunkFile.File)
 	Buf, _ = ioutil.ReadAll(file)
 
-	bool, _ := PathExists(chunkFile.Name)
+	filePath := "upload/" + chunkFile.Name
+
+	bool, _ := PathExists(filePath)
 
 	if !bool {
-		os.Create(chunkFile.Name)
+		os.Create(filePath)
 	}
-	fd, _ := os.OpenFile(chunkFile.Name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
-	buf := []byte(Buf)
-	fd.Write(buf)
+	fd, _ := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	fd.Write(Buf)
 	fd.Close()
 
-	// if chunkFile.Chunk == 0 {
-	// 	// fd, _ :=os.Create(chunkFile.Name)
-	// 	// buf:=[]byte(Buf)
-	// 	// fd.Write(buf)
-	// 	// fd.Close()
-	// 	ioutil.WriteFile(chunkFile.Name, Buf, 0644)
-	// } else {
-
-	// }
-	//
-	c.JSON(http.StatusOK, gin.H{
-		"state": "SUCCESS",
-	})
+	if chunkFile.Chunk+1 == chunkFile.Chunks {
+		c.JSON(http.StatusOK, gin.H{
+			"state": "SUCCESS",
+			"url":   "/" + filePath,
+		})
+	} else {
+		contentType := strings.Split(c.GetHeader("Content-Type"), "boundary=")
+		c.String(http.StatusOK, contentType[1])
+	}
 }
