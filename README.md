@@ -476,7 +476,7 @@ func fileChunkUpload(c *gin.Context) {
 	}
 }
 ```
-[服务端接口完整代码](https://github.com/freeshineit/gin_rotuer_web/blob/feature/chunk_upload/controllers/handle_func.go)
+[服务端接口完整代码](https://github.com/freeshineit/gin_rotuer_web/blob/master/controllers/handle_func.go)
 
 ## 客户端（web）
 
@@ -534,7 +534,7 @@ uploader.init();
 
 ```
 
-[客户端完整代码](https://github.com/freeshineit/gin_rotuer_web/blob/feature/chunk_upload/views/upload.html)
+[客户端完整代码](https://github.com/freeshineit/gin_rotuer_web/blob/master/views/upload.html)
 
 [demo](https://github.com/freeshineit/gin_rotuer_web)
 
