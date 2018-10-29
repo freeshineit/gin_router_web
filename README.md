@@ -412,6 +412,130 @@ $('.file_upload').on('click', function () {
 [官方文件上传demo](https://github.com/gin-gonic/gin/tree/master/examples/upload-file)
 
 
+## 文件分片上传原理
+    
+客户端会根据文件大小和用户要分片的大小来计算文件分片个数。客户端会一片一片的去请求接口把文件的所有片段上传带服务器端。
+
+服务端接受客户端上传的文件片段进行缓存或创建文件并读入该片段，直至最后一片上传成功。
+
+## 服务器端
+
+服务器端使用的是go语言的gin框架。
+
+```go
+type ChunkFile struct {
+	Name   string         `json:"name" form:"name"`
+	Chunk  int            `json:"chunk" form:"chunk"`
+	Chunks int            `json:"chunks" form:"chunks"`
+}
+
+func PathExists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
+}
+// 文件分片上传handler
+func fileChunkUpload(c *gin.Context) {
+
+	var chunkFile ChunkFile
+	r := c.Request
+
+	c.Bind(&chunkFile)
+
+	var Buf = make([]byte, 0)
+	// in your case file would be fileupload
+	file, _, _ := r.FormFile("file")
+
+	log.Println("this is ", chunkFile.File)
+	Buf, _ = ioutil.ReadAll(file)
+
+	filePath := "upload/"+ chunkFile.Name
+
+	bool, _ := PathExists(filePath)
+
+	if !bool {
+		os.Create(filePath)
+	}
+	fd, _ := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	fd.Write(Buf)
+	fd.Close()
+
+	if chunkFile.Chunk + 1 == chunkFile.Chunks {
+		c.JSON(http.StatusOK, gin.H{
+			"state": "SUCCESS",
+			"url": "/"+filePath,
+		})
+	} else {
+		contentType := strings.Split(c.GetHeader("Content-Type"), "boundary=")
+		c.String(http.StatusOK, contentType[1])
+	}
+}
+```
+[服务端接口完整代码](https://github.com/freeshineit/gin_rotuer_web/blob/feature/chunk_upload/controllers/handle_func.go)
+
+## 客户端（web）
+
+客户端使用的是[plupload](https://www.plupload.com/)文件上传插件，好处是它提供了分片上传，创建对象时配置`chunk_size`属性就可以实现了（插件底层会根据文件大小和`chunk_size`来计算分片的个数）。
+
+```js
+var uploader = new plupload.Uploader({
+    runtimes : 'html5,flash,silverlight,html4',
+    browse_button : 'pickfiles', // you can pass an id...
+    container: document.getElementById('container'), // ... or DOM Element itself
+    url : '/api/file_chunk_upload',
+    flash_swf_url : '/static/js/Moxie.swf',
+    silverlight_xap_url : '/static/js/Moxie.xap',
+    chunk_size: '200kb',
+    filters : {
+        max_file_size : '10mb',
+        mime_types: [
+            {title : "Image files", extensions : "jpg,gif,png"},
+            {title : "Zip files", extensions : "zip"}
+        ]
+    },
+
+    init: {
+        PostInit: function() {
+            document.getElementById('filelist').innerHTML = '';
+
+            document.getElementById('uploadfiles').onclick = function() {
+                uploader.start();
+                return false;
+            };
+        },
+
+        FilesAdded: function(up, files) {
+            plupload.each(files, function(file) {
+                document.getElementById('filelist').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+            });
+        },
+
+        UploadProgress: function(up, file) {
+            document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
+        },
+
+        Error: function(up, err) {
+            document.getElementById('console').appendChild(document.createTextNode("\nError #" + err.code + ": " + err.message));
+        }
+    }
+});
+
+uploader.bind('ChunkUploaded', function(up, file, info) {
+    // do some chunk related stuff
+    console.log(info)
+});
+
+uploader.init();
+
+```
+
+[客户端完整代码](https://github.com/freeshineit/gin_rotuer_web/blob/feature/chunk_upload/views/upload.html)
+
 [demo](https://github.com/freeshineit/gin_rotuer_web)
 
 
