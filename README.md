@@ -366,7 +366,7 @@ axios({
 });
 ```
 
-[官方文件上传 demo](https://github.com/gin-gonic/gin/tree/master/examples/upload-file)
+[官方文件上传 demo](https://github.com/gin-gonic/examples/tree/master/upload-file)
 
 ## 文件分片上传原理
 
