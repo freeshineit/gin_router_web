@@ -1,7 +1,8 @@
 # gin_router_web
 
->	`gin`是简单快速的`golang`框架,这篇文章主要是介绍`gin`的路由配置及使用（主要是post方法）
+>     `gin`是简单快速的`golang`框架,这篇文章主要是介绍`gin`的路由配置及使用（主要是post方法）
 
+golang >= 1.12
 
 ## 静态资源配置
 
@@ -13,14 +14,13 @@ func setStaticFS(r *gin.Engine) {
 }
 ```
 
-`func (engine *Engine) LoadHTMLGlob(pattern string)`函数加载全局模式的HTML文件标识，并将结果与HTML渲染器相关联。
+`func (engine *Engine) LoadHTMLGlob(pattern string)`函数加载全局模式的 HTML 文件标识，并将结果与 HTML 渲染器相关联。
 
 `func (group *RouterGroup) StaticFS(relativePath string, fs http.FileSystem) IRoutes` 设置相对路径的静态资源
 
+## api
 
-## api 
-
->	api路由分组
+>     api路由分组
 
 ```go
 api := r.Group("/api")
@@ -46,17 +46,17 @@ api := r.Group("/api")
 }
 
 ```
+
 ## 消息的类型
 
 常用请求`Headers`中`Content-Type`的类型有`text/plain`、`text/html`、`application/json`、`application/x-www-form-urlencoded`、`application/xml`和`multipart/form-data`等.
 
--	`text/plain` 纯文本
--	`text/html` HTML文档
--	`application/json` json格式数据
--	`application/x-www-form-urlencoded` 使用HTTP的POST方法提交的表单
--	`application/xml` xml格式数据
--	`application/form-data`主要是用来上传文件
-
+- `text/plain` 纯文本
+- `text/html` HTML 文档
+- `application/json` json 格式数据
+- `application/x-www-form-urlencoded` 使用 HTTP 的 POST 方法提交的表单
+- `application/xml` xml 格式数据
+- `application/form-data`主要是用来上传文件
 
 [MIME](https://zh.wikipedia.org/wiki/MIME)
 
@@ -84,17 +84,17 @@ func formPost(c *gin.Context) {
 
 ```
 
-html实现
+html 实现
 
 ```html
 <form method="post" action="/api/form_post">
-	<input type="text" name="message">
-	<input type="text" name="nick">
-	<button type="submit">提交</button>
+  <input type="text" name="message" />
+  <input type="text" name="nick" />
+  <button type="submit">提交</button>
 </form>
 ```
 
-## post提交`application/json`类型数据
+## post 提交`application/json`类型数据
 
 gin 路由实现
 
@@ -123,27 +123,27 @@ func jsonPost(c *gin.Context) {
 
 ```
 
-js实现
+js 实现
 
 ```js
-$('.json').on('click', function() {
-	axios({
-  		method: 'post',
-	  	url: '/api/json_post',
-	  	headers: {
-	  		'Content-Type': 'application/json'
-	  	},
-	  	data
-	}).then(res => {
-		console.log(res.data)
-		$('.json-msg').text(`success  ${new Date()}`)
-	})
-})
+$(".json").on("click", function () {
+  axios({
+    method: "post",
+    url: "/api/json_post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data,
+  }).then((res) => {
+    console.log(res.data);
+    $(".json-msg").text(`success  ${new Date()}`);
+  });
+});
 ```
 
-## post提交`application/x-www-form-urlencoded`类型数据
+## post 提交`application/x-www-form-urlencoded`类型数据
 
-gin实现
+gin 实现
 
 ```go
 // application/x-www-form-urlencoded
@@ -163,7 +163,7 @@ func urlencodedPost(c *gin.Context) {
 }
 ```
 
-js实现
+js 实现
 
 ```
 $('.urlencoded').on('click', function() {
@@ -223,55 +223,52 @@ func jsonAndFormPost(c *gin.Context) {
 js 实现
 
 ```js
+$(".jsonandform").on("click", function () {
+  var data = {};
+  var inputs = $("#form input");
 
-$('.jsonandform').on('click', function() {
-	var data = {}
-	var inputs = $('#form input')
+  for (let i = 0; i < inputs.length; i++) {
+    data[$(inputs[i]).attr("name")] = $(inputs[i]).val();
+  }
 
-	for (let i = 0; i < inputs.length; i ++) {
-		data[$(inputs[i]).attr('name')] = $(inputs[i]).val()
-	}
+  axios({
+    method: "post",
+    url: "/api/json_and_form_post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data,
+  }).then((res) => {
+    console.log(res.data);
+    $(".jsonandform-msg").text(`success application/json data,  ${new Date()}`);
+  });
+});
 
+$(".jsonandform2").on("click", function () {
+  var data = {};
+  var inputs = $("#form input");
 
-	axios({
-  		method: 'post',
-	  	url: '/api/json_and_form_post',
-	  	headers: {
-	  		'Content-Type': 'application/json'
-	  	},
-	  	data
-	}).then(res => {
-		console.log(res.data)
-		$('.jsonandform-msg').text(`success application/json data,  ${new Date()}`)
-	})
-})
+  for (let i = 0; i < inputs.length; i++) {
+    data[$(inputs[i]).attr("name")] = $(inputs[i]).val();
+  }
 
-$('.jsonandform2').on('click', function() {
-	var data = {}
-	var inputs = $('#form input')
-
-	for (let i = 0; i < inputs.length; i ++) {
-		data[$(inputs[i]).attr('name')] = $(inputs[i]).val()
-	}
-
-
-	axios({
-  		method: 'post',
-	  	url: '/api/json_and_form_post',
-	  	headers: {
-	  		'Content-Type': 'application/x-www-form-urlencoded'
-	  	},
-	  	data:$.param(data)
-	}).then(res => {
-		console.log(res.data)
-		$('.jsonandform-msg').text(`success application/x-www-form-urlencoded data${new Date()}`)
-	})
-})
-
+  axios({
+    method: "post",
+    url: "/api/json_and_form_post",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    data: $.param(data),
+  }).then((res) => {
+    console.log(res.data);
+    $(".jsonandform-msg").text(
+      `success application/x-www-form-urlencoded data${new Date()}`
+    );
+  });
+});
 ```
 
-
-## post提交`application/xml`类型数据(`application/xml`)
+## post 提交`application/xml`类型数据(`application/xml`)
 
 gin 实现
 
@@ -302,30 +299,28 @@ func xmlPost(c *gin.Context) {
 js 实现
 
 ```js
-$('.xml_post').on('click', function() {
-	var data = {}
-	var inputs = $('#form input')
+$(".xml_post").on("click", function () {
+  var data = {};
+  var inputs = $("#form input");
 
-	for (let i = 0; i < inputs.length; i ++) {
-		data[$(inputs[i]).attr('name')] = $(inputs[i]).val()
-	}
+  for (let i = 0; i < inputs.length; i++) {
+    data[$(inputs[i]).attr("name")] = $(inputs[i]).val();
+  }
 
-	axios({
-		method: 'post',
-		url: '/api/xml_post',
-		headers: {
-			"Content-Type": 'application/xml'
-		},
-		data: `<xml><name>${data.name}</name><message>${data.message}</message><nick>${data.nick}</nick></xml>`
-	})
-})
-
+  axios({
+    method: "post",
+    url: "/api/xml_post",
+    headers: {
+      "Content-Type": "application/xml",
+    },
+    data: `<xml><name>${data.name}</name><message>${data.message}</message><nick>${data.nick}</nick></xml>`,
+  });
+});
 ```
 
+## post 提交`multipart/form-data`类型数据(`multipart/form-data`)
 
-## post提交`multipart/form-data`类型数据(`multipart/form-data`)
-
-gin实现文件上传
+gin 实现文件上传
 
 ```go
 func fileUpload(c *gin.Context) {
@@ -365,62 +360,67 @@ func fileUpload(c *gin.Context) {
 }
 ```
 
-html实现
+html 实现
 
 ```html
 <div>
-	<form id="multipleForm">
-		<input type="file" name="file" id='file' multiple="multiple" accept="image/*">
-	</form>
-	<button class="file_upload">上传文件</button>
+  <form id="multipleForm">
+    <input
+      type="file"
+      name="file"
+      id="file"
+      multiple="multiple"
+      accept="image/*"
+    />
+  </form>
+  <button class="file_upload">上传文件</button>
 </div>
 ```
 
-js实现
+js 实现
 
 ```js
-$('.file_upload').on('click', function () {
+$(".file_upload").on("click", function () {
+  // 单个文件上传
+  // var fd = new FormData()
+  // var file = document.getElementById('file')
+  // fd.append('file', file.files[0])
 
-	// 单个文件上传
-	// var fd = new FormData()
-	// var file = document.getElementById('file')
-	// fd.append('file', file.files[0])
+  axios({
+    method: "post",
+    url: "/api/file_upload",
+    headers: {
+      "Content-Type": "application/form-data",
+    },
+    // data:fd
+    data: new FormData($("#multipleForm")[0]),
+  }).then((res) => {
+    console.log(res.data);
+    const urls = res.data.url.split(";");
+    let imgHtml = "";
 
-	axios({
-  		method: 'post',
-	  	url: '/api/file_upload',
-	  	headers: {
-	  		'Content-Type': 'application/form-data'
-	  	},
-	  	// data:fd
-	  	data: new FormData($('#multipleForm')[0])
+    for (let i = 0; i < urls.length; i++) {
+      imgHtml += `<img style="width: 200px" src="/${urls[i]}" />`;
+    }
 
-	}).then(res => {
-		console.log(res.data)
-		const urls = res.data.url.split(';')
-		let imgHtml = '';
-
-		for(let i = 0; i < urls.length; i ++) {
-			imgHtml += `<img style="width: 200px" src="/${urls[i]}" />`
-		}
-
-		$('.file_upload-msg').html(`<div>success ${new Date()} 文件地址/${res.data.url} ${imgHtml}</div>`)
-	})
-})
+    $(".file_upload-msg").html(
+      `<div>success ${new Date()} 文件地址/${res.data.url} ${imgHtml}</div>`
+    );
+  });
+});
 ```
 
-[官方文件上传demo](https://github.com/gin-gonic/gin/tree/master/examples/upload-file)
-
+[官方文件上传 demo](https://github.com/gin-gonic/gin/tree/master/examples/upload-file)
 
 ## 文件分片上传原理
-    
+
 客户端会根据文件大小和用户要分片的大小来计算文件分片个数。客户端会一片一片的去请求接口把文件的所有片段上传带服务器端。
 
 服务端接受客户端上传的文件片段进行缓存或创建文件并读入该片段，直至最后一片上传成功。
 
 ## 服务器端
 
-服务器端使用的是go语言的gin框架。
+服务器端使用的是 go 语言的 gin 框架。
 
 ```go
 type ChunkFile struct {
@@ -476,6 +476,7 @@ func fileChunkUpload(c *gin.Context) {
 	}
 }
 ```
+
 [服务端接口完整代码](https://github.com/freeshineit/gin_rotuer_web/blob/master/controllers/handle_func.go)
 
 ## 客户端（web）
@@ -484,67 +485,67 @@ func fileChunkUpload(c *gin.Context) {
 
 ```js
 var uploader = new plupload.Uploader({
-    runtimes : 'html5,flash,silverlight,html4',
-    browse_button : 'pickfiles', // you can pass an id...
-    container: document.getElementById('container'), // ... or DOM Element itself
-    url : '/api/file_chunk_upload',
-    flash_swf_url : '/static/js/Moxie.swf',
-    silverlight_xap_url : '/static/js/Moxie.xap',
-    chunk_size: '200kb',
-    filters : {
-        max_file_size : '10mb',
-        mime_types: [
-            {title : "Image files", extensions : "jpg,gif,png"},
-            {title : "Zip files", extensions : "zip"}
-        ]
+  runtimes: "html5,flash,silverlight,html4",
+  browse_button: "pickfiles", // you can pass an id...
+  container: document.getElementById("container"), // ... or DOM Element itself
+  url: "/api/file_chunk_upload",
+  flash_swf_url: "/static/js/Moxie.swf",
+  silverlight_xap_url: "/static/js/Moxie.xap",
+  chunk_size: "200kb",
+  filters: {
+    max_file_size: "10mb",
+    mime_types: [
+      { title: "Image files", extensions: "jpg,gif,png" },
+      { title: "Zip files", extensions: "zip" },
+    ],
+  },
+
+  init: {
+    PostInit: function () {
+      document.getElementById("filelist").innerHTML = "";
+
+      document.getElementById("uploadfiles").onclick = function () {
+        uploader.start();
+        return false;
+      };
     },
 
-    init: {
-        PostInit: function() {
-            document.getElementById('filelist').innerHTML = '';
+    FilesAdded: function (up, files) {
+      plupload.each(files, function (file) {
+        document.getElementById("filelist").innerHTML +=
+          '<div id="' +
+          file.id +
+          '">' +
+          file.name +
+          " (" +
+          plupload.formatSize(file.size) +
+          ") <b></b></div>";
+      });
+    },
 
-            document.getElementById('uploadfiles').onclick = function() {
-                uploader.start();
-                return false;
-            };
-        },
+    UploadProgress: function (up, file) {
+      document.getElementById(file.id).getElementsByTagName("b")[0].innerHTML =
+        "<span>" + file.percent + "%</span>";
+    },
 
-        FilesAdded: function(up, files) {
-            plupload.each(files, function(file) {
-                document.getElementById('filelist').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
-            });
-        },
-
-        UploadProgress: function(up, file) {
-            document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
-        },
-
-        Error: function(up, err) {
-            document.getElementById('console').appendChild(document.createTextNode("\nError #" + err.code + ": " + err.message));
-        }
-    }
+    Error: function (up, err) {
+      document
+        .getElementById("console")
+        .appendChild(
+          document.createTextNode("\nError #" + err.code + ": " + err.message)
+        );
+    },
+  },
 });
 
-uploader.bind('ChunkUploaded', function(up, file, info) {
-    // do some chunk related stuff
-    console.log(info)
+uploader.bind("ChunkUploaded", function (up, file, info) {
+  // do some chunk related stuff
+  console.log(info);
 });
 
 uploader.init();
-
 ```
 
 [客户端完整代码](https://github.com/freeshineit/gin_rotuer_web/blob/master/views/upload.html)
 
 [demo](https://github.com/freeshineit/gin_rotuer_web)
-
-
-
-
-
-
-
-
-
-
-
