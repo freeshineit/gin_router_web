@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"gin-router-web/serialize"
 	"io/ioutil"
 	"log"
 	"mime/multipart"
@@ -22,78 +23,80 @@ type User struct {
 func FormPost(c *gin.Context) {
 
 	message := c.PostForm("message")
-	nick := c.DefaultPostForm("nick", "anonymous")
+	nick := c.DefaultPostForm("nick", "default nick")
+	name := c.DefaultPostForm("name", "default name")
+	user := User{
+		Name:    name,
+		Nick:    nick,
+		Message: message,
+	}
 
-	log.Println(message, nick)
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "SUCCESS",
-		"message": message,
-		"nick":    nick,
-	})
+	// This way is better
+	// 下面这种方式 会自动和定义的结构体进行绑定
+	// user := &User{}
+	// c.ShouldBind(user)
+
+	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
 }
 
 // UrlencodedPost application/x-www-form-urlencoded
 func UrlencodedPost(c *gin.Context) {
 
-	name := c.Query("name")
+	limit := c.Query("limit")
+	name := c.PostForm("name")
 	message := c.PostForm("message")
 	nick := c.DefaultPostForm("nick", "1231412")
+	user := User{
+		Name:    name,
+		Nick:    nick,
+		Message: message,
+	}
 
-	log.Println(name, message, nick)
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "SUCCESS",
-		"name":    name,
-		"message": message,
-		"nick":    nick,
-	})
+	// This way is better
+	// 下面这种方式 会自动和定义的结构体进行绑定
+	// user := &User{}
+	// c.ShouldBind(user)
+
+	log.Printf("request query limit: %s\n", limit)
+
+	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
 }
 
 // JSONPost json
 func JSONPost(c *gin.Context) {
 	var user User
+	if err := c.BindJSON(&user); err != nil {
+		c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusBadRequest, "fail", nil))
+		return
+	}
 
-	c.BindJSON(&user)
-
-	log.Println(user.Name, user.Message, user.Nick)
-
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "SUCCESS",
-		"name":    user.Name,
-		"message": user.Message,
-		"nick":    user.Nick,
-	})
+	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
 }
 
 //JSONAndFormPost  application/json  application/x-www-form-urlencoded
 func JSONAndFormPost(c *gin.Context) {
 	var user User
 
-	c.Bind(&user)
+	if err := c.ShouldBind(&user); err != nil {
+		c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusBadRequest, "fail", nil))
+		return
+	}
 
-	log.Println(user.Name, user.Message, user.Nick)
-
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "SUCCESS",
-		"name":    user.Name,
-		"message": user.Message,
-		"nick":    user.Nick,
-	})
+	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
 }
 
 //XMLPost xml
 func XMLPost(c *gin.Context) {
 	var user User
 
-	c.Bind(&user)
+	// c.ShouldBind(&user)
+	// c.Bind(&user)
+	if err := c.BindXML(&user); err != nil {
+		c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusBadRequest, "fail", nil))
+		return
+	}
 
-	log.Println(user.Name, user.Message, user.Nick)
-
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "SUCCESS",
-		"name":    user.Name,
-		"message": user.Message,
-		"nick":    user.Nick,
-	})
+	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
 }
 
 // FileUpload file upload
@@ -130,10 +133,9 @@ func FileUpload(c *gin.Context) {
 		filesURL = append(filesURL, "upload/"+file.Filename)
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"state": "SUCCESS",
-		"url":   strings.Join(filesURL, ";"),
-	})
+	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", gin.H{
+		"url": strings.Join(filesURL, ";"),
+	}))
 }
 
 // ChunkFile file chunk

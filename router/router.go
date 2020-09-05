@@ -4,13 +4,14 @@ import (
 	"net/http"
 
 	"gin-router-web/controllers"
+	"gin-router-web/serialize"
 
 	"github.com/gin-gonic/gin"
 )
 
 func setStaticFS(r *gin.Engine) {
 	// set html template
-	r.LoadHTMLGlob("views/*")
+	r.LoadHTMLGlob("./views/*.html")
 
 	// set server static
 	r.StaticFile("favicon.ico", "./views/favicon.ico")
@@ -18,19 +19,21 @@ func setStaticFS(r *gin.Engine) {
 	r.StaticFS("/upload", http.Dir("upload"))
 }
 
+func setWebRouter(r *gin.Engine) {
+	// 首页 router /
+	r.GET("/", controllers.WebIndex)
+	r.GET("/upload", controllers.WebUpload)
+}
+
 // SetupRouter  set gin router
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
-	setStaticFS(r) // 设置静态资源
+	// 设置静态资源
+	setStaticFS(r)
 
-	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", nil)
-	})
-
-	r.GET("/upload", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "upload.html", nil)
-	})
+	// set web router
+	setWebRouter(r)
 
 	api := r.Group("/api")
 	{
@@ -44,15 +47,14 @@ func SetupRouter() *gin.Engine {
 
 		api.POST("/file_chunk_upload", controllers.FileChunkUpload)
 
-		api.GET("/list", func(c *gin.Context) {
+		api.GET("/query", func(c *gin.Context) {
 			message := c.Query("message")
 			nick := c.DefaultQuery("nick", "anonymous")
 
-			c.JSON(http.StatusOK, gin.H{
-				"status":  "SUCCESS",
-				"message": message,
-				"nick":    nick,
-			})
+			c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", gin.H{
+				message: message,
+				nick:    nick,
+			}))
 		})
 	}
 
