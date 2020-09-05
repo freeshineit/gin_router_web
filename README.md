@@ -8,7 +8,11 @@ golang >= 1.12
 
 ```go
 func setStaticFS(r *gin.Engine) {
+	// set html template
 	r.LoadHTMLGlob("views/*")
+
+	// set server static
+	r.StaticFile("favicon.ico", "./views/favicon.ico")
 	r.StaticFS("/static", http.Dir("public/static"))
 	r.StaticFS("/upload", http.Dir("upload"))
 }
@@ -20,7 +24,7 @@ func setStaticFS(r *gin.Engine) {
 
 ## api
 
->     api路由分组
+> api 路由分组
 
 ```go
 api := r.Group("/api")
@@ -37,11 +41,10 @@ api := r.Group("/api")
 		message := c.Query("message")
 		nick := c.DefaultQuery("nick", "anonymous")
 
-		c.JSON(http.StatusOK, gin.H{
-			"status":  "SUCCESS",
-			"message": message,
-			"nick":    nick,
-		})
+    c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", gin.H{
+      message: message,
+      nick:    nick,
+    }))
 	})
 }
 
@@ -65,31 +68,50 @@ api := r.Group("/api")
 gin 路由实现
 
 ```go
-
-api.POST("/form_post", formPost)
-
-// 表单提交
-func formPost(c *gin.Context) {
-
-	message := c.PostForm("message")
-	nick := c.DefaultPostForm("nick", "anonymous") // 没有获取到nick值时给一个默认值
-
-	log.Println(message, nick)
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "SUCCESS",
-		"message": message,
-		"nick":    nick,
-	})
+// User user struct
+type User struct {
+	Name    string `json:"name" form:"name" xml:"name"`
+	Message string `json:"message" form:"message" xml:"message"`
+	Nick    string `json:"nick" form:"nick" xml:"nick"`
 }
 
+// FormPost 表单提交
+func FormPost(c *gin.Context) {
+
+	message := c.PostForm("message")
+	nick := c.DefaultPostForm("nick", "default nick")
+	name := c.DefaultPostForm("name", "default name")
+	user := User{
+		Name:    name,
+		Nick:    nick,
+		Message: message,
+	}
+
+	// This way is better
+	// 下面这种方式 会自动和定义的结构体进行绑定
+	// user := &User{}
+	// c.ShouldBind(user)
+
+	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
+}
 ```
 
 html 实现
 
 ```html
-<form method="post" action="/api/form_post">
-  <input type="text" name="message" />
-  <input type="text" name="nick" />
+<form method="post" action="/api/form_post" id="form">
+  <div class="form-item">
+    <label for="name">name</label>
+    <input type="text" id="name" name="name" />
+  </div>
+  <div class="form-item">
+    <label for="message">message</label>
+    <input type="text" id="message" name="message" />
+  </div>
+  <div class="form-item">
+    <label for="name">nick</label>
+    <input type="text" id="nick" name="nick" />
+  </div>
   <button type="submit">提交</button>
 </form>
 ```
@@ -99,45 +121,31 @@ html 实现
 gin 路由实现
 
 ```go
-
-type User struct {
-	Name    string `json:"name" form:"name"`
-	Message string `json:"message" form:"message"`
-	Nick    string `json:"nick" form:"nick"`
-}
-
-func jsonPost(c *gin.Context) {
+// JSONPost json
+func JSONPost(c *gin.Context) {
 	var user User
+	if err := c.BindJSON(&user); err != nil {
+		c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusBadRequest, "fail", nil))
+		return
+	}
 
-	c.BindJSON(&user)
-
-	log.Println(user.Name, user.Message, user.Nick)
-
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "SUCCESS",
-		"name":    user.Name,
-		"message": user.Message,
-		"nick":    user.Nick,
-	})
+	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
 }
-
 ```
 
 js 实现
 
 ```js
-$(".json").on("click", function () {
-  axios({
-    method: "post",
-    url: "/api/json_post",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data,
-  }).then((res) => {
-    console.log(res.data);
-    $(".json-msg").text(`success  ${new Date()}`);
-  });
+axios({
+  method: "post",
+  url: "/api/json_post",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  data,
+}).then((res) => {
+  console.log(res.data);
+  $(".json-msg").text(`success  ${new Date()}`);
 });
 ```
 
@@ -146,49 +154,44 @@ $(".json").on("click", function () {
 gin 实现
 
 ```go
-// application/x-www-form-urlencoded
-func urlencodedPost(c *gin.Context) {
+// UrlencodedPost application/x-www-form-urlencoded
+func UrlencodedPost(c *gin.Context) {
 
-	name := c.Query("name")
+	limit := c.Query("limit")
+	name := c.PostForm("name")
 	message := c.PostForm("message")
 	nick := c.DefaultPostForm("nick", "1231412")
+	user := User{
+		Name:    name,
+		Nick:    nick,
+		Message: message,
+	}
 
-	log.Println(name, message, nick)
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "SUCCESS",
-		"name":    name,
-		"message": message,
-		"nick":    nick,
-	})
+	// This way is better
+	// 下面这种方式 会自动和定义的结构体进行绑定
+	// user := &User{}
+	// c.ShouldBind(user)
+
+	log.Printf("request query limit: %s\n", limit)
+
+	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
 }
 ```
 
 js 实现
 
-```
-$('.urlencoded').on('click', function() {
-
-	var data = {}
-	var inputs = $('#form input')
-
-
-	for (let i = 0; i < inputs.length; i ++) {
-		data[$(inputs[i]).attr('name')] = $(inputs[i]).val()
-	}
-
-	axios({
- 	 	method: 'post',
-	  	url: '/api/urlencoded_post?name=shineshao',
-	  	headers: {
-	  		'Content-Type': 'application/x-www-form-urlencoded'
-	  	},
-	  	data: $.param(data)
-	}).then(res => {
-		console.log(res.data)
-		$('.urlencoded-msg').text(`success  ${new Date()}`)
-	})
-})
-
+```js
+axios({
+  method: "post",
+  url: "/api/urlencoded_post?name=shineshao",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded",
+  },
+  data: $.param(data),
+}).then((res) => {
+  console.log(res.data);
+  $(".urlencoded-msg").text(`success  ${new Date()}`);
+});
 ```
 
 ## post 提交`application/x-www-form-urlencoded`或`application/json`类型数据
@@ -196,75 +199,48 @@ $('.urlencoded').on('click', function() {
 gin
 
 ```go
-type User struct {
-	Name    string `json:"name" form:"name"`
-	Message string `json:"message" form:"message"`
-	Nick    string `json:"nick" form:"nick"`
-}
-
-// application/json  application/x-www-form-urlencoded
-func jsonAndFormPost(c *gin.Context) {
+//JSONAndFormPost  application/json  application/x-www-form-urlencoded
+func JSONAndFormPost(c *gin.Context) {
 	var user User
 
-	c.Bind(&user)
+	if err := c.ShouldBind(&user); err != nil {
+		c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusBadRequest, "fail", nil))
+		return
+	}
 
-	log.Println(user.Name, user.Message, user.Nick)
-
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "SUCCESS",
-		"name":    user.Name,
-		"message": user.Message,
-		"nick":    user.Nick,
-	})
+	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
 }
-
 ```
 
 js 实现
 
 ```js
-$(".jsonandform").on("click", function () {
-  var data = {};
-  var inputs = $("#form input");
-
-  for (let i = 0; i < inputs.length; i++) {
-    data[$(inputs[i]).attr("name")] = $(inputs[i]).val();
-  }
-
-  axios({
-    method: "post",
-    url: "/api/json_and_form_post",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data,
-  }).then((res) => {
-    console.log(res.data);
-    $(".jsonandform-msg").text(`success application/json data,  ${new Date()}`);
-  });
+// json
+axios({
+  method: "post",
+  url: "/api/json_and_form_post",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  data,
+}).then((res) => {
+  console.log(res.data);
+  $(".jsonandform-msg").text(`success application/json data,  ${new Date()}`);
 });
 
-$(".jsonandform2").on("click", function () {
-  var data = {};
-  var inputs = $("#form input");
-
-  for (let i = 0; i < inputs.length; i++) {
-    data[$(inputs[i]).attr("name")] = $(inputs[i]).val();
-  }
-
-  axios({
-    method: "post",
-    url: "/api/json_and_form_post",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    data: $.param(data),
-  }).then((res) => {
-    console.log(res.data);
-    $(".jsonandform-msg").text(
-      `success application/x-www-form-urlencoded data${new Date()}`
-    );
-  });
+// x-www-form-urlencoded
+axios({
+  method: "post",
+  url: "/api/json_and_form_post",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded",
+  },
+  data: $.param(data),
+}).then((res) => {
+  console.log(res.data);
+  $(".jsonandform-msg").text(
+    `success application/x-www-form-urlencoded data${new Date()}`
+  );
 });
 ```
 
@@ -273,48 +249,31 @@ $(".jsonandform2").on("click", function () {
 gin 实现
 
 ```go
-type User struct {
-	Name    string `json:"name" form:"name" xml:"name"`
-	Message string `json:"message" form:"message" xml:"message"`
-	Nick    string `json:"nick" form:"nick" xml:"nick"`
-}
-
-func xmlPost(c *gin.Context) {
+//XMLPost xml
+func XMLPost(c *gin.Context) {
 	var user User
 
-	c.Bind(&user)
+	// c.ShouldBind(&user)
+	// c.Bind(&user)
+	if err := c.BindXML(&user); err != nil {
+		c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusBadRequest, "fail", nil))
+		return
+	}
 
-	log.Println(user.Name, user.Message, user.Nick)
-
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "SUCCESS",
-		"name":    user.Name,
-		"message": user.Message,
-		"nick":    user.Nick,
-	})
+	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
 }
-
 ```
 
 js 实现
 
 ```js
-$(".xml_post").on("click", function () {
-  var data = {};
-  var inputs = $("#form input");
-
-  for (let i = 0; i < inputs.length; i++) {
-    data[$(inputs[i]).attr("name")] = $(inputs[i]).val();
-  }
-
-  axios({
-    method: "post",
-    url: "/api/xml_post",
-    headers: {
-      "Content-Type": "application/xml",
-    },
-    data: `<xml><name>${data.name}</name><message>${data.message}</message><nick>${data.nick}</nick></xml>`,
-  });
+axios({
+  method: "post",
+  url: "/api/xml_post",
+  headers: {
+    "Content-Type": "application/xml",
+  },
+  data: `<xml><name>${data.name}</name><message>${data.message}</message><nick>${data.nick}</nick></xml>`,
 });
 ```
 
@@ -353,10 +312,9 @@ func fileUpload(c *gin.Context) {
 		filesUrl = append(filesUrl, "upload/"+file.Filename)
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"state": "SUCCESS",
-		"url":   strings.Join(filesUrl, ";"),
-	})
+	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", gin.H{
+		"url": strings.Join(filesURL, ";"),
+	}))
 }
 ```
 
@@ -380,33 +338,31 @@ html 实现
 js 实现
 
 ```js
-$(".file_upload").on("click", function () {
-  // 单个文件上传
-  // var fd = new FormData()
-  // var file = document.getElementById('file')
-  // fd.append('file', file.files[0])
+// 单个文件上传
+// var fd = new FormData()
+// var file = document.getElementById('file')
+// fd.append('file', file.files[0])
 
-  axios({
-    method: "post",
-    url: "/api/file_upload",
-    headers: {
-      "Content-Type": "application/form-data",
-    },
-    // data:fd
-    data: new FormData($("#multipleForm")[0]),
-  }).then((res) => {
-    console.log(res.data);
-    const urls = res.data.url.split(";");
-    let imgHtml = "";
+axios({
+  method: "post",
+  url: "/api/file_upload",
+  headers: {
+    "Content-Type": "application/form-data",
+  },
+  // data:fd // 单个文件上传
+  data: new FormData($("#multipleForm")[0]),
+}).then((res) => {
+  console.log(res.data);
+  const urls = res.data.url.split(";");
+  let imgHtml = "";
 
-    for (let i = 0; i < urls.length; i++) {
-      imgHtml += `<img style="width: 200px" src="/${urls[i]}" />`;
-    }
+  for (let i = 0; i < urls.length; i++) {
+    imgHtml += `<img style="width: 200px" src="/${urls[i]}" />`;
+  }
 
-    $(".file_upload-msg").html(
-      `<div>success ${new Date()} 文件地址/${res.data.url} ${imgHtml}</div>`
-    );
-  });
+  $(".file_upload-msg").html(
+    `<div>success ${new Date()} 文件地址/${res.data.url} ${imgHtml}</div>`
+  );
 });
 ```
 
@@ -417,6 +373,8 @@ $(".file_upload").on("click", function () {
 客户端会根据文件大小和用户要分片的大小来计算文件分片个数。客户端会一片一片的去请求接口把文件的所有片段上传带服务器端。
 
 服务端接受客户端上传的文件片段进行缓存或创建文件并读入该片段，直至最后一片上传成功。
+
+> [http://localhost:8080/upload](http://localhost:8080/upload)
 
 ## 服务器端
 
@@ -495,7 +453,7 @@ var uploader = new plupload.Uploader({
   filters: {
     max_file_size: "10mb",
     mime_types: [
-      { title: "Image files", extensions: "jpg,gif,png" },
+      { title: "Image files", extensions: "jpg,gif,png,jpeg" },
       { title: "Zip files", extensions: "zip" },
     ],
   },
