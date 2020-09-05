@@ -1,18 +1,24 @@
-package controllers
+package router
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"gin-router-web/controllers"
+
+	"github.com/gin-gonic/gin"
 )
 
 func setStaticFS(r *gin.Engine) {
+	// set html template
 	r.LoadHTMLGlob("views/*")
 
+	// set server static
 	r.StaticFile("favicon.ico", "./views/favicon.ico")
 	r.StaticFS("/static", http.Dir("public/static"))
 	r.StaticFS("/upload", http.Dir("upload"))
 }
 
+// SetupRouter  set gin router
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
@@ -28,15 +34,15 @@ func SetupRouter() *gin.Engine {
 
 	api := r.Group("/api")
 	{
-		api.POST("/form_post", formPost)
+		api.POST("/form_post", controllers.FormPost)
 
-		api.POST("/json_post", jsonPost)
-		api.POST("/urlencoded_post", urlencodedPost)
-		api.POST("/json_and_form_post", jsonAndFormPost)
-		api.POST("/xml_post", xmlPost)
-		api.POST("/file_upload", fileUpload)
+		api.POST("/json_post", controllers.JSONPost)
+		api.POST("/urlencoded_post", controllers.UrlencodedPost)
+		api.POST("/json_and_form_post", controllers.JSONAndFormPost)
+		api.POST("/xml_post", controllers.XMLPost)
+		api.POST("/file_upload", controllers.FileUpload)
 
-		api.POST("/file_chunk_upload", fileChunkUpload)
+		api.POST("/file_chunk_upload", controllers.FileChunkUpload)
 
 		api.GET("/list", func(c *gin.Context) {
 			message := c.Query("message")

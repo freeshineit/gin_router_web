@@ -1,23 +1,25 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
+// User user struct
 type User struct {
 	Name    string `json:"name" form:"name" xml:"name"`
 	Message string `json:"message" form:"message" xml:"message"`
 	Nick    string `json:"nick" form:"nick" xml:"nick"`
 }
 
-// 表单提交
-func formPost(c *gin.Context) {
+// FormPost 表单提交
+func FormPost(c *gin.Context) {
 
 	message := c.PostForm("message")
 	nick := c.DefaultPostForm("nick", "anonymous")
@@ -30,8 +32,8 @@ func formPost(c *gin.Context) {
 	})
 }
 
-// application/x-www-form-urlencoded
-func urlencodedPost(c *gin.Context) {
+// UrlencodedPost application/x-www-form-urlencoded
+func UrlencodedPost(c *gin.Context) {
 
 	name := c.Query("name")
 	message := c.PostForm("message")
@@ -46,7 +48,8 @@ func urlencodedPost(c *gin.Context) {
 	})
 }
 
-func jsonPost(c *gin.Context) {
+// JSONPost json
+func JSONPost(c *gin.Context) {
 	var user User
 
 	c.BindJSON(&user)
@@ -61,8 +64,8 @@ func jsonPost(c *gin.Context) {
 	})
 }
 
-// application/json  application/x-www-form-urlencoded
-func jsonAndFormPost(c *gin.Context) {
+//JSONAndFormPost  application/json  application/x-www-form-urlencoded
+func JSONAndFormPost(c *gin.Context) {
 	var user User
 
 	c.Bind(&user)
@@ -77,7 +80,8 @@ func jsonAndFormPost(c *gin.Context) {
 	})
 }
 
-func xmlPost(c *gin.Context) {
+//XMLPost xml
+func XMLPost(c *gin.Context) {
 	var user User
 
 	c.Bind(&user)
@@ -92,9 +96,10 @@ func xmlPost(c *gin.Context) {
 	})
 }
 
-func fileUpload(c *gin.Context) {
+// FileUpload file upload
+func FileUpload(c *gin.Context) {
 
-	filesUrl := make([]string, 0)
+	filesURL := make([]string, 0)
 
 	form, err := c.MultipartForm()
 
@@ -102,7 +107,7 @@ func fileUpload(c *gin.Context) {
 	log.Println(c.GetHeader("Content-Type"))
 
 	if err != nil {
-		log.Println("postMultipleFile error: %s")
+		log.Printf("postMultipleFile error: %s \n", err.Error())
 	}
 
 	files := form.File["file"]
@@ -118,19 +123,20 @@ func fileUpload(c *gin.Context) {
 
 		// Upload the file to specific dst.
 		if err = c.SaveUploadedFile(file, "upload/"+file.Filename); err != nil {
-			log.Println("SaveUploadedFile error: %s")
+			log.Printf("SaveUploadedFile error: %s \n", err.Error())
 
 			return
 		}
-		filesUrl = append(filesUrl, "upload/"+file.Filename)
+		filesURL = append(filesURL, "upload/"+file.Filename)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"state": "SUCCESS",
-		"url":   strings.Join(filesUrl, ";"),
+		"url":   strings.Join(filesURL, ";"),
 	})
 }
 
+// ChunkFile file chunk
 type ChunkFile struct {
 	Name   string                `json:"name" form:"name"`
 	Chunk  int                   `json:"chunk" form:"chunk"`
@@ -138,6 +144,7 @@ type ChunkFile struct {
 	File   *multipart.FileHeader `json:"file" form:"file"`
 }
 
+// PathExists 判断文件是否已经存在
 func PathExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil {
@@ -149,7 +156,8 @@ func PathExists(path string) (bool, error) {
 	return false, err
 }
 
-func fileChunkUpload(c *gin.Context) {
+// FileChunkUpload file chunk upload
+func FileChunkUpload(c *gin.Context) {
 
 	var chunkFile ChunkFile
 	r := c.Request

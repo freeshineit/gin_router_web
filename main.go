@@ -1,11 +1,16 @@
 package main
 
 import (
-	"github.com/freeshineit/gin_rotuer_web/controllers"
+	"gin-router-web/router"
+	"log"
 )
 
 func main() {
-	r := controllers.SetupRouter()
+	r := router.SetupRouter()
 
-	r.Run(":8089") // listen and serve on 0.0.0.0:8089
+	err := r.Run(":8089") // listen and serve on 0.0.0.0:8089
+
+	if err == nil {
+		log.Println("listen and serve on localhost:8089")
+	}
 }
