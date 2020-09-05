@@ -1,256 +1,238 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="utf-8">
-	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-	<title>gin router</title>
-	<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-	<!-- <script src="static/js/mserver.js"></script> -->
-	<style type="text/css">
-		.container {
-			width: 800px;
-			margin: 0 auto;
-			padding: 50px 0;
-		}
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+  <title>gin router</title>
+  <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <!-- <script src="static/js/mserver.js"></script> -->
+  <style type="text/css">
+    .container {
+      width: 800px;
+      margin: 0 auto;
+      padding: 50px 0;
+    }
 
-		section {
-			margin-bottom: 50px;
-		}
+    section {
+      margin-bottom: 50px;
+    }
 
-	</style>
+    #form .form-item {
+      display: flex;
+      margin-bottom: 10px;
+    }
+
+    #form label {
+      width: 80px;
+      display: inline-block;
+    }
+  </style>
 </head>
+
 <body>
-	<div class="container">
-		<section>
-			<!-- 成功 -->
-			<p>表单提交</p>
-			<form method="post" action="/api/form_post" id='form'>
-				<input type="text" name="name">
-				<input type="text" name="message">
-				<input type="text" name="nick">
-				<button type="submit">提交</button>
-			</form>
-		</section>
-		<hr />
-		<section>
-			<p>post请求 `application/x-www-form-urlencoded`数据格式</p>
-			<button class='urlencoded'>x-www-form-urlencoded</button>
-			<div class="urlencoded-msg"><div>
-		</section>
-		<hr />
-		<section>
-			<p>post请求 `application/json`数据格式</p>
-			<button class='json'>json</button>
-			<div class="json-msg"></div>
-		</section>
+  <div class="container">
+    <p style="background-color: yellow;">接口的数据都是使用第一个表单中的值，部分接口调用结果请在`Network`中查看</p>
+    <section>
+      <!-- 成功 -->
+      <p>表单提交</p>
+      <form method="post" action="/api/form_post" id='form'>
+        <div class="form-item">
+          <label for='name'>name</label>
+          <input type="text" id='name' name="name">
+        </div>
+        <div class="form-item">
+          <label for='message'>message</label>
+          <input type="text" id='message' name="message">
+        </div>
+        <div class="form-item">
+          <label for='name'>nick</label>
+          <input type="text" id='nick' name="nick">
+        </div>
+        <button type="submit">提交</button>
+      </form>
+    </section>
+    <hr />
+    <section>
+      <p>post请求 `application/x-www-form-urlencoded`数据格式</p>
+      <button class='urlencoded'>x-www-form-urlencoded</button>
+      <div class="urlencoded-msg"></div>
+    </section>
+    <hr />
+    <section>
+      <p>post请求 `application/json`数据格式</p>
+      <button class='json'>json</button>
+      <div class="json-msg"></div>
+    </section>
 
-		<hr />
-		<section>
-			<p>post请求</p>
-			<p>不同数据格式请求同一个接口</p>
-			<button class='jsonandform'>json</button>
-			<button class='jsonandform2'>x-www-form-urlencoded</button>
-			<div class="jsonandform-msg"></div>
-		</section>
-		<hr />
-		<section>
-			<p>post请求 `application/xml`</p>
-			<button class="xml_post">xml_post</button>
-			<div class="xml-msg"></div>
-		</section>
-		<hr />
-		<section>
-			<p>文件上传</p>
-			<div>
-				<form id="multipleForm">
-					<input type="file" name="file" id='file' multiple="multiple" accept="image/*">
-				</form>
-				<button class="file_upload">上传文件</button>
-			</div>
-			<div class="file_upload-msg"></div>
-		</section>
-		<hr />
-		<section>
-			<p>带参数的get请求</p>
-			<button class="list">list</button>
-			<div class="list-msg"></div>
-		</section>
-		<hr />
-	</div>
-	<script type="text/javascript">
-		(function () {
+    <hr />
+    <section>
+      <p>post请求</p>
+      <p>不同数据格式请求同一个接口</p>
+      <button class='jsonandform'>json</button>
+      <button class='jsonandform2'>x-www-form-urlencoded</button>
+      <div class="jsonandform-msg"></div>
+    </section>
+    <hr />
+    <section>
+      <p>post请求 `application/xml`</p>
+      <button class="xml_post">xml_post</button>
+      <div class="xml-msg"></div>
+    </section>
+    <hr />
+    <section>
+      <p>文件上传</p>
+      <div>
+        <form id="multipleForm">
+          <input type="file" name="file" id='file' multiple="multiple" accept="image/*">
+        </form>
+        <button class="file_upload">上传文件</button>
+      </div>
+      <div class="file_upload-msg"></div>
+      <a href="/upload" target="_blank">文件分片上传</a>
+    </section>
+    <hr />
+    <section>
+      <p>带参数的get请求</p>
+      <button class="query">query</button>
+      <div class="query-msg"></div>
+    </section>
+    <hr />
+  </div>
+  <script type="text/javascript">
+    (function () {
 
-			$('.urlencoded').on('click', function() {
+      $('.urlencoded').on('click', function () {
+        var data = getFormValue()
+        axios({
+          method: 'post',
+          url: '/api/urlencoded_post?limit=10',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          data: $.param(data)
+        }).then(res => {
+          console.log(res.data)
+          $('.urlencoded-msg').text(`success  ${new Date()}`)
+        })
+      })
 
-				var data = {}
-				var inputs = $('#form input')
+      $('.json').on('click', function () {
+        var data = getFormValue()
+        axios({
+          method: 'post',
+          url: '/api/json_post',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          data
+        }).then(res => {
+          console.log(res.data)
+          $('.json-msg').text(`success  ${new Date()}`)
+        })
+      })
 
+      $('.jsonandform').on('click', function () {
+        var data = getFormValue()
 
-				for (let i = 0; i < inputs.length; i ++) {
-					data[$(inputs[i]).attr('name')] = $(inputs[i]).val()
-				}
+        axios({
+          method: 'post',
+          url: '/api/json_and_form_post',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          data
+        }).then(res => {
+          console.log(res.data)
+          $('.jsonandform-msg').text(`success application/json data,  ${new Date()}`)
+        })
+      })
 
-				axios({
-			 	 	method: 'post',
-				  	url: '/api/urlencoded_post?name=shineshao',
-				  	headers: {
-				  		'Content-Type': 'application/x-www-form-urlencoded'
-				  	},
-				  	data: $.param(data)
-				}).then(res => {
-					console.log(res.data)
-					$('.urlencoded-msg').text(`success  ${new Date()}`)
-				})
-			})
+      $('.jsonandform2').on('click', function () {
+        var data = getFormValue()
 
+        axios({
+          method: 'post',
+          url: '/api/json_and_form_post',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          data: $.param(data)
+        }).then(res => {
+          console.log(res.data)
+          $('.jsonandform-msg').text(`success application/x-www-form-urlencoded data${new Date()}`)
+        })
+      })
 
-			// $('.json').on('click', function() {
+      $('.xml_post').on('click', function () {
+        var data = getFormValue()
 
-			// 	axios({
-			//   		method: 'post',
-			// 	  	url: '/api/json_and_form_post',
-			// 	  	headers: {
-			// 	  		'Content-Type': 'application/json'
-			// 	  	},
-			// 	  	data
-			// 	}).then(res => {
-			// 		console.log(res.data)
-			// 		$('.json-msg').text(`success  ${new Date()}`)
-			// 	})
-			// })
+        axios({
+          method: 'post',
+          url: '/api/xml_post',
+          headers: {
+            "Content-Type": 'application/xml'
+          },
+          data: `<xml><name>${data.name}</name><message>${data.message}</message><nick>${data.nick}</nick></xml>`
+        }).then(res => {
+          $('.xml-msg').text(`success xml data ${new Date()}`)
+        })
+      })
 
-			$('.json').on('click', function() {
-				var data = {}
-				var inputs = $('#form input')
+      $('.file_upload').on('click', function () {
+        // 单个文件上传
+        // var fd = new FormData()
+        // var file = document.getElementById('file')
+        // fd.append('file', file.files[0])
 
+        axios({
+          method: 'post',
+          url: '/api/file_upload',
+          headers: {
+            'Content-Type': 'application/form-data'
+          },
+          data: new FormData($('#multipleForm')[0])
 
-				for (let i = 0; i < inputs.length; i ++) {
-					data[$(inputs[i]).attr('name')] = $(inputs[i]).val()
-				}
+        }).then(res => {
+          console.log(res.data)
+          const urls = res.data.data.url.split(';')
+          let imgHtml = '';
 
-				axios({
-			  		method: 'post',
-				  	url: '/api/json_post',
-				  	headers: {
-				  		'Content-Type': 'application/json'
-				  	},
-				  	data
-				}).then(res => {
-					console.log(res.data)
-					$('.json-msg').text(`success  ${new Date()}`)
-				})
-			})
+          for (let i = 0; i < urls.length; i++) {
+            imgHtml += `<img style="width: 200px" src="/${urls[i]}" />`
+          }
 
+          $('.file_upload-msg').html(
+            `<div>success ${new Date()} 文件地址/${res.data.url} <div>${imgHtml}</div></div>`)
+        })
+      })
 
-			$('.jsonandform').on('click', function() {
-				var data = {}
-				var inputs = $('#form input')
+      // 成功
+      $('.query').on('click', function () {
+        axios.get('/api/query', {
+            params: {
+              message: 'message',
+              nick: 'shineshao'
+            }
+          })
+          .then(res => {
+            console.log(res.data)
+            $('.query-msg').text(`success ${new Date()}`)
+          })
+      })
 
-				for (let i = 0; i < inputs.length; i ++) {
-					data[$(inputs[i]).attr('name')] = $(inputs[i]).val()
-				}
+      function getFormValue() {
+        var data = {}
+        var inputs = $('#form input')
+        for (let i = 0; i < inputs.length; i++) {
+          data[$(inputs[i]).attr('name')] = $(inputs[i]).val()
+        }
+        return data
+      }
 
-
-				axios({
-			  		method: 'post',
-				  	url: '/api/json_and_form_post',
-				  	headers: {
-				  		'Content-Type': 'application/json'
-				  	},
-				  	data
-				}).then(res => {
-					console.log(res.data)
-					$('.jsonandform-msg').text(`success application/json data,  ${new Date()}`)
-				})
-			})
-
-			$('.jsonandform2').on('click', function() {
-				var data = {}
-				var inputs = $('#form input')
-
-				for (let i = 0; i < inputs.length; i ++) {
-					data[$(inputs[i]).attr('name')] = $(inputs[i]).val()
-				}
-
-
-				axios({
-			  		method: 'post',
-				  	url: '/api/json_and_form_post',
-				  	headers: {
-				  		'Content-Type': 'application/x-www-form-urlencoded'
-				  	},
-				  	data:$.param(data)
-				}).then(res => {
-					console.log(res.data)
-					$('.jsonandform-msg').text(`success application/x-www-form-urlencoded data${new Date()}`)
-				})
-			})
-
-			$('.xml_post').on('click', function() {
-				var data = {}
-				var inputs = $('#form input')
-
-				for (let i = 0; i < inputs.length; i ++) {
-					data[$(inputs[i]).attr('name')] = $(inputs[i]).val()
-				}
-
-				axios({
-					method: 'post',
-					url: '/api/xml_post',
-					headers: {
-						"Content-Type": 'application/xml'
-					},
-					data: `<xml><name>${data.name}</name><message>${data.message}</message><nick>${data.nick}</nick></xml>`
-				}).then(res => {
-					$('.xml-msg').text(`success xml data ${new Date()}`)
-				})
-			})
-
-			$('.file_upload').on('click', function () {
-
-				// 单个文件上传
-				// var fd = new FormData()
-				// var file = document.getElementById('file')
-				// fd.append('file', file.files[0])
-
-				axios({
-			  		method: 'post',
-				  	url: '/api/file_upload',
-				  	headers: {
-				  		'Content-Type': 'application/form-data'
-				  	},
-				  	// data:fd
-				  	data: new FormData($('#multipleForm')[0])
-
-				}).then(res => {
-					console.log(res.data)
-					const urls = res.data.url.split(';')
-					let imgHtml = '';
-
-					for(let i = 0; i < urls.length; i ++) {
-						imgHtml += `<img style="width: 200px" src="/${urls[i]}" />`
-					}
-
-					$('.file_upload-msg').html(`<div>success ${new Date()} 文件地址/${res.data.url} <div>${imgHtml}</div></div>`)
-				})
-			})
-
-			// 成功
-			$('.list').on('click', function() {
-				axios.get('/api/list',{
-					    params: {
-					    	message: 'message',
-					    	nick: 'shineshao'
-					    }
-					})
-					.then(res => {
-						console.log(res.data)
-						$('.list-msg').text(`success ${new Date()}`)
-					})
-			})
-
-		})();
-	</script>
+    })();
+  </script>
 </body>
+
 </html>
