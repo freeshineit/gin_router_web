@@ -12,7 +12,7 @@
 
   <h1>大文件分片上传</h1>
 
-  <div id="filelist">Your browser doesn't have Flash, Silverlight or HTML5 support.</div>
+  <div id="filelist">Your browser doesn't have HTML5 support.</div>
   <br />
 
   <div id="container">
@@ -28,12 +28,10 @@
     // Custom example logic
 
     var uploader = new plupload.Uploader({
-      runtimes: 'html5,flash,silverlight,html4',
+      runtimes: 'html5',
       browse_button: 'pickfiles', // you can pass an id...
       container: document.getElementById('container'), // ... or DOM Element itself
       url: '/api/file_chunk_upload',
-      flash_swf_url: '/static/js/Moxie.swf',
-      silverlight_xap_url: '/static/js/Moxie.xap',
       chunk_size: '100kb',
       filters: {
         // max_file_size : '10mb',
