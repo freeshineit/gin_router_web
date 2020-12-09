@@ -21,6 +21,8 @@ func main() {
 		Handler: r,
 	}
 
+	log.Println("> listen: http://localhost:8080")
+
 	// Initializing the server in a goroutine so that
 	// it won't block the graceful shutdown handling below
 	go func() {

@@ -182,6 +182,8 @@ func FileChunkUpload(c *gin.Context) {
 	if !bool {
 		os.Create(filePath)
 	}
+	// http://c.biancheng.net/view/5729.html
+	// 打开文件并追加内容
 	fd, _ := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	fd.Write(Buf)
 	fd.Close()
