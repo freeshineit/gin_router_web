@@ -414,11 +414,6 @@ func fileChunkUpload(c *gin.Context) {
 
 	filePath := "upload/"+ chunkFile.Name
 
-	bool, _ := PathExists(filePath)
-
-	if !bool {
-		os.Create(filePath)
-	}
 	fd, _ := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	fd.Write(Buf)
 	fd.Close()
