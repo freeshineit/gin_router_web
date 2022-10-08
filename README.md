@@ -1,8 +1,22 @@
 # gin_router_web
 
->     `gin`是简单快速的`golang`框架,这篇文章主要是介绍`gin`的路由配置及使用（主要是post方法）
+>     [gin](https://github.com/gin-gonic/gin)是简单快速的`golang`框架,这篇文章主要是介绍`gin`的路由配置及使用（主要是post方法）
 
-golang >= 1.12
+golang >= 1.15
+
+
+## 使用
+
+```bash
+# development
+go run main.go
+
+# build
+go build
+
+# run
+./gin-router-web
+```
 
 ## 静态资源配置
 

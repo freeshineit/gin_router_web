@@ -10,7 +10,7 @@
 
 <body style="font: 13px Verdana; background: #eee; color: #333">
 
-  <h1>大文件分片上传</h1>
+  <h1>大文件分片上传(每片 100kb)</h1>
 
   <div id="filelist">Your browser doesn't have HTML5 support.</div>
   <br />
@@ -36,13 +36,13 @@
       filters: {
         // max_file_size : '10mb',
         mime_types: [{
-            title: "Image files",
-            extensions: "jpg,gif,png,jpeg"
-          },
-          {
-            title: "Zip files",
-            extensions: "zip"
-          }
+          title: "Image files",
+          extensions: "jpg,gif,png,jpeg"
+        },
+        {
+          title: "Zip files",
+          extensions: "zip"
+        }
         ]
       },
 
