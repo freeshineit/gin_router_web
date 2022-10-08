@@ -16,6 +16,9 @@ go build
 
 # run
 ./gin-router-web
+
+# docker
+docker-compose up -d
 ```
 
 ## 静态资源配置
