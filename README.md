@@ -1,6 +1,6 @@
 # gin_router_web
 
-![build](https://github.com/freeshineit/gin_router_web/workflows/build/badge.svg)
+![build](https://github.com/freeshineit/gin_rotuer_web/workflows/build/badge.svg)
 
 [gin](https://github.com/gin-gonic/gin)是简单快速的`golang`框架,这篇文章主要是介绍`gin`的路由配置及使用（主要是post方法）
 
