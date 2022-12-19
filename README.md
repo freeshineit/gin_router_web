@@ -1,6 +1,8 @@
 # gin_router_web
 
->     [gin](https://github.com/gin-gonic/gin)是简单快速的`golang`框架,这篇文章主要是介绍`gin`的路由配置及使用（主要是post方法）
+![build](https://github.com/freeshineit/gin_router_web/workflows/build/badge.svg)
+
+[gin](https://github.com/gin-gonic/gin)是简单快速的`golang`框架,这篇文章主要是介绍`gin`的路由配置及使用（主要是post方法）
 
 golang >= 1.17
 
@@ -17,8 +19,25 @@ go build
 # run
 ./gin-router-web
 
+# server 8080
+http://localhost:8080/
+# file chunk upload
+http://localhost:8080/upload
+
 # docker
 docker-compose up -d
+```
+
+## API
+```md
+[POST]   /api/form_post          
+[POST]   /api/json_post          
+[POST]   /api/urlencoded_post    
+[POST]   /api/json_and_form_post 
+[POST]   /api/xml_post           
+[POST]   /api/file_upload        
+[POST]   /api/file_chunk_upload  
+[GET]    /api/query              
 ```
 
 ## 静态资源配置
