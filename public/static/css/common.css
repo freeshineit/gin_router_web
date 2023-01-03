@@ -1,0 +1,19 @@
+.container {
+    width: 600px;
+    margin: 0 auto;
+    padding: 50px 0;
+}
+
+section {
+    margin-bottom: 50px;
+}
+
+#form .form-item {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+#form label {
+    width: 80px;
+    display: inline-block;
+}

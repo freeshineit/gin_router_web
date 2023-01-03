@@ -37,14 +37,25 @@ func SetupRouter() *gin.Engine {
 
 	api := r.Group("/api")
 	{
+		// 表单提交
 		api.POST("/form_post", controllers.FormPost)
 
+		// json提交
 		api.POST("/json_post", controllers.JSONPost)
+
+		//url encode 提交
 		api.POST("/urlencoded_post", controllers.UrlencodedPost)
+
+		// 即支持json又支持form
 		api.POST("/json_and_form_post", controllers.JSONAndFormPost)
+
+		// xml 提交
 		api.POST("/xml_post", controllers.XMLPost)
+
+		// 文件上传
 		api.POST("/file_upload", controllers.FileUpload)
 
+		// 文件分片上传
 		api.POST("/file_chunk_upload", controllers.FileChunkUpload)
 
 		api.GET("/query", func(c *gin.Context) {

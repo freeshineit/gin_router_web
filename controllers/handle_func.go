@@ -73,7 +73,7 @@ func JSONPost(c *gin.Context) {
 	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
 }
 
-//JSONAndFormPost  application/json  application/x-www-form-urlencoded
+// JSONAndFormPost  application/json  application/x-www-form-urlencoded
 func JSONAndFormPost(c *gin.Context) {
 	var user User
 
@@ -85,7 +85,7 @@ func JSONAndFormPost(c *gin.Context) {
 	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
 }
 
-//XMLPost xml
+// XMLPost xml
 func XMLPost(c *gin.Context) {
 	var user User
 
