@@ -27,6 +27,7 @@
       browse_button: 'pickfiles', // you can pass an id...
       container: document.getElementById('container'), // ... or DOM Element itself
       url: '/api/file_chunk_upload',
+      // 每片文件的大小
       chunk_size: '100kb',
       filters: {
         // max_file_size : '10mb',
@@ -58,6 +59,16 @@
         UploadProgress: function (up, file) {
           document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent +
             "%</span>";
+        },
+        FileUploaded: function (up, file, result) {
+          console.log(up, file, result)
+          try {
+            const res = JSON.parse(result.response)
+            console.log(res)
+            document.getElementById(file.id).append(res.data.url)
+          } catch (error) {
+
+          }
         },
         Error: function (up, err) {
           document.getElementById('console').appendChild(document.createTextNode("\nError #" + err.code + ": " +

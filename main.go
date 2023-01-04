@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	r := router.SetupRouter()
+	r := router.SetupRoutes()
 
 	// code from gin github
 	// https://github.com/gin-gonic/gin#manually

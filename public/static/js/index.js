@@ -81,7 +81,7 @@
   });
 
   $(".file_upload").on("click", function () {
-    // 单个文件上传
+    // 单个或多个文件上传
     // var fd = new FormData()
     // var file = document.getElementById('file')
     // fd.append('file', file.files[0])
@@ -94,17 +94,19 @@
       data: new FormData($("#multipleForm")[0])
     }).then((res) => {
       console.log(res.data);
-      const urls = res.data.data.url.split(";");
+      const urls = res.data.data.urls || [];
+
       let imgHtml = "";
 
       for (let i = 0; i < urls.length; i++) {
-        imgHtml += `<img style="width: 200px" src="/${urls[i]}" />`;
+        imgHtml += `<div><img style="width: 200px" src="/${urls[i]}" /> <div>/${urls[i]}</div></div>`;
       }
 
       $(".file_upload-msg").html(
-        `<div>success ${new Date()} 文件地址/${
-          res.data.url
-        } <div>${imgHtml}</div></div>`
+        `<div>${new Date()}<div>
+          ${imgHtml}
+          </div>
+      </div>`
       );
     });
   });

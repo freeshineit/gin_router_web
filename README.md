@@ -4,7 +4,7 @@
 
 [gin](https://github.com/gin-gonic/gin)是简单快速的`golang`框架,这篇文章主要是介绍`gin`的路由配置及使用（主要是post方法）
 
-golang >= 1.17
+golang >= 1.18
 
 
 ## 使用
@@ -22,7 +22,7 @@ go build
 # server 8080
 http://localhost:8080/
 # file chunk upload
-http://localhost:8080/upload
+http://localhost:8080/upload_chunks
 
 # docker
 docker-compose up -d
@@ -48,7 +48,7 @@ func setStaticFS(r *gin.Engine) {
 	r.LoadHTMLGlob("views/*")
 
 	// set server static
-	r.StaticFile("favicon.ico", "./views/favicon.ico")
+	r.StaticFile("favicon.ico", "./public/favicon.ico")
 	r.StaticFS("/static", http.Dir("public/static"))
 	r.StaticFS("/upload", http.Dir("upload"))
 }
@@ -315,7 +315,7 @@ axios({
 
 ## post 提交`multipart/form-data`类型数据(`multipart/form-data`)
 
-gin 实现文件上传
+gin 实现文件上传 (api/upload.go)
 
 ```go
 func fileUpload(c *gin.Context) {
@@ -348,8 +348,8 @@ func fileUpload(c *gin.Context) {
 		filesUrl = append(filesUrl, "upload/"+file.Filename)
 	}
 
-	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", gin.H{
-		"url": strings.Join(filesURL, ";"),
+	c.JSON(http.StatusOK, models.BuildResponse(http.StatusOK, "success", gin.H{
+		"urls": filesURL,
 	}))
 }
 ```
@@ -367,7 +367,7 @@ html 实现
       accept="image/*"
     />
   </form>
-  <button class="file_upload">上传文件</button>
+  <button class="file_upload">开始上传文件</button>
 </div>
 ```
 
@@ -388,17 +388,21 @@ axios({
   // data:fd // 单个文件上传
   data: new FormData($("#multipleForm")[0]),
 }).then((res) => {
-  console.log(res.data);
-  const urls = res.data.url.split(";");
-  let imgHtml = "";
+    console.log(res.data);
+    const urls = res.data.data.urls || [];
 
-  for (let i = 0; i < urls.length; i++) {
-    imgHtml += `<img style="width: 200px" src="/${urls[i]}" />`;
-  }
+    let imgHtml = "";
 
-  $(".file_upload-msg").html(
-    `<div>success ${new Date()} 文件地址/${res.data.url} ${imgHtml}</div>`
-  );
+    for (let i = 0; i < urls.length; i++) {
+      imgHtml += `<div><img style="width: 200px" src="/${urls[i]}" /> <div>/${urls[i]}</div></div>`;
+    }
+
+    $(".file_upload-msg").html(
+      `<div>${new Date()}<div>
+        ${imgHtml}
+        </div>
+    </div>`
+    );
 });
 ```
 
@@ -410,7 +414,7 @@ axios({
 
 服务端接受客户端上传的文件片段进行缓存或创建文件并读入该片段，直至最后一片上传成功。
 
-> [http://localhost:8080/upload](http://localhost:8080/upload)
+> [http://localhost:8080/upload_chunks](http://localhost:8080/upload_chunks)
 
 ## 服务器端
 
@@ -466,7 +470,7 @@ func fileChunkUpload(c *gin.Context) {
 }
 ```
 
-[服务端接口完整代码](https://github.com/freeshineit/gin_rotuer_web/blob/master/controllers/handle_func.go)
+[服务端接口完整代码](https://github.com/freeshineit/gin_rotuer_web/blob/master/api)
 
 ## 客户端（web）
 
@@ -480,7 +484,7 @@ var uploader = new plupload.Uploader({
   url: "/api/file_chunk_upload",
   flash_swf_url: "/static/js/Moxie.swf",
   silverlight_xap_url: "/static/js/Moxie.xap",
-  chunk_size: "200kb",
+  chunk_size: "100kb",
   filters: {
     max_file_size: "10mb",
     mime_types: [
@@ -535,6 +539,6 @@ uploader.bind("ChunkUploaded", function (up, file, info) {
 uploader.init();
 ```
 
-[客户端完整代码](https://github.com/freeshineit/gin_rotuer_web/blob/master/views/upload.html)
+[客户端文件上传完整代码](https://github.com/freeshineit/gin_rotuer_web/blob/master/views/upload_chunks.html)
 
 [demo](https://github.com/freeshineit/gin_rotuer_web)

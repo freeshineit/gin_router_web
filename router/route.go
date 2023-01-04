@@ -3,8 +3,8 @@ package router
 import (
 	"net/http"
 
-	"gin-router-web/controllers"
-	"gin-router-web/serialize"
+	"gin-router-web/api"
+	"gin-router-web/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,50 +19,50 @@ func setStaticFS(r *gin.Engine) {
 	r.StaticFS("/upload", http.Dir("upload"))
 }
 
-func setWebRouter(r *gin.Engine) {
+func setWebRoute(r *gin.Engine) {
 	// 首页 router /
-	r.GET("/", controllers.WebIndex)
-	r.GET("/upload", controllers.WebUpload)
+	r.GET("/", api.WebIndex)
+	r.GET("/upload_chunks", api.WebUploadChunks)
 }
 
 // SetupRouter  set gin router
-func SetupRouter() *gin.Engine {
+func SetupRoutes() *gin.Engine {
 	r := gin.Default()
 
 	// 设置静态资源
 	setStaticFS(r)
 
 	// set web router
-	setWebRouter(r)
+	setWebRoute(r)
 
-	api := r.Group("/api")
+	apiGroup := r.Group("/api")
 	{
 		// 表单提交
-		api.POST("/form_post", controllers.FormPost)
+		apiGroup.POST("/form_post", api.FormPost)
 
 		// json提交
-		api.POST("/json_post", controllers.JSONPost)
+		apiGroup.POST("/json_post", api.JSONPost)
 
 		//url encode 提交
-		api.POST("/urlencoded_post", controllers.UrlencodedPost)
+		apiGroup.POST("/urlencoded_post", api.UrlencodedPost)
 
 		// 即支持json又支持form
-		api.POST("/json_and_form_post", controllers.JSONAndFormPost)
+		apiGroup.POST("/json_and_form_post", api.JSONAndFormPost)
 
 		// xml 提交
-		api.POST("/xml_post", controllers.XMLPost)
+		apiGroup.POST("/xml_post", api.XMLPost)
 
 		// 文件上传
-		api.POST("/file_upload", controllers.FileUpload)
+		apiGroup.POST("/file_upload", api.FileUpload)
 
 		// 文件分片上传
-		api.POST("/file_chunk_upload", controllers.FileChunkUpload)
+		apiGroup.POST("/file_chunk_upload", api.FileChunkUpload)
 
-		api.GET("/query", func(c *gin.Context) {
+		apiGroup.GET("/query", func(c *gin.Context) {
 			message := c.Query("message")
 			nick := c.DefaultQuery("nick", "anonymous")
 
-			c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", gin.H{
+			c.JSON(http.StatusOK, models.BuildResponse(http.StatusOK, "success", gin.H{
 				message: message,
 				nick:    nick,
 			}))

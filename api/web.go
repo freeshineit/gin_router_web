@@ -1,4 +1,4 @@
-package controllers
+package api
 
 import (
 	"net/http"
@@ -14,8 +14,8 @@ func WebIndex(c *gin.Context) {
 	})
 }
 
-// WebUpload upload web
+// WebUploadChunks upload web
 // router [/upload.html]
-func WebUpload(c *gin.Context) {
-	c.HTML(http.StatusOK, "upload.html", gin.H{})
+func WebUploadChunks(c *gin.Context) {
+	c.HTML(http.StatusOK, "upload_chunks.html", gin.H{})
 }
