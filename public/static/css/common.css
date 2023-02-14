@@ -17,3 +17,38 @@ section {
     width: 80px;
     display: inline-block;
 }
+
+button {
+    outline: none;
+    position: relative;
+    display: inline-block;
+    font-weight: 400;
+    white-space: nowrap;
+    text-align: center;
+    background-image: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all .2s cubic-bezier(.645,.045,.355,1);
+    user-select: none;
+    touch-action: manipulation;
+    line-height: 1.6;
+    color: rgba(0,0,0,.88);
+    height: 32px;
+}
+
+button.btn-primary {
+    color: #fff;
+    background-color: #1677ff;
+    box-shadow: 0 2px 0 rgb(5 145 255 / 10%);
+}
+
+button.btn-block {
+    width: 100%;
+    text-align: center;
+}
+
+button.btn-primary:hover {
+    color: #fff;
+    background-color: #4096ff;
+}

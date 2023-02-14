@@ -30,20 +30,20 @@
           <label for='name'>nick</label>
           <input type="text" id='nick' name="nick">
         </div>
-        <button type="submit">提交</button>
+        <button type="submit" class="btn-primary">提交</button>
       </form>
     </section>
     <hr />
 
     <section>
       <p>post请求 `application/x-www-form-urlencoded`数据格式</p>
-      <button class='urlencoded'>x-www-form-urlencoded</button>
+      <button class='urlencoded btn-primary'>x-www-form-urlencoded</button>
       <div class="urlencoded-msg"></div>
     </section>
     <hr />
     <section>
       <p>post请求 `application/json`数据格式</p>
-      <button class='json'>json</button>
+      <button class='json btn-primary'>json</button>
       <div class="json-msg"></div>
     </section>
     <hr />
@@ -51,15 +51,15 @@
     <section>
       <p>post请求</p>
       <p>不同数据格式请求同一个接口</p>
-      <button class='jsonandform'>json</button>
-      <button class='jsonandform2'>x-www-form-urlencoded</button>
+      <button class='jsonandform btn-primary' class="">json</button>
+      <button class='jsonandform2 btn-primary'>x-www-form-urlencoded</button>
       <div class="jsonandform-msg"></div>
     </section>
     <hr />
 
     <section>
       <p>post请求 `application/xml`</p>
-      <button class="xml_post">xml_post</button>
+      <button class="xml_post btn-primary">xml_post</button>
       <div class="xml-msg"></div>
     </section>
     <hr />
@@ -70,7 +70,7 @@
         <form id="multipleForm">
           <input type="file" name="file" id='file' multiple="multiple" accept="image/*">
         </form>
-        <button class="file_upload">开始上传文件</button>
+        <button class="file_upload btn-primary">开始上传文件</button>
       </div>
       <div class="file_upload-msg"></div>
       <br />
@@ -80,7 +80,7 @@
 
     <section>
       <p>带参数的get请求</p>
-      <button class="query">query</button>
+      <button class="query btn-primary">query</button>
       <div class="query-msg"></div>
     </section>
     <hr />
