@@ -55,7 +55,7 @@ func UrlencodedPost(c *gin.Context) {
 func JSONPost(c *gin.Context) {
 	var user models.User
 	if err := c.BindJSON(&user); err != nil {
-		c.JSON(http.StatusOK, models.BuildResponse[any](http.StatusBadRequest, "fail", nil))
+		c.AbortWithStatusJSON(http.StatusOK, models.BuildResponse[any](http.StatusBadRequest, "fail", nil))
 		return
 	}
 
@@ -67,7 +67,7 @@ func JSONAndFormPost(c *gin.Context) {
 	var user models.User
 
 	if err := c.ShouldBind(&user); err != nil {
-		c.JSON(http.StatusOK, models.BuildResponse[any](http.StatusBadRequest, "fail", nil))
+		c.AbortWithStatusJSON(http.StatusOK, models.BuildResponse[any](http.StatusBadRequest, "fail", nil))
 		return
 	}
 
@@ -81,7 +81,7 @@ func XMLPost(c *gin.Context) {
 	// c.ShouldBind(&user)
 	// c.Bind(&user)
 	if err := c.BindXML(&user); err != nil {
-		c.JSON(http.StatusOK, models.BuildResponse[any](http.StatusBadRequest, "fail", nil))
+		c.AbortWithStatusJSON(http.StatusOK, models.BuildResponse[any](http.StatusBadRequest, "fail", nil))
 		return
 	}
 

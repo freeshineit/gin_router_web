@@ -24,6 +24,7 @@ func FileUpload(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("postMultipleFile error: %s \n", err.Error())
+		return
 	}
 
 	files := form.File["file"]
