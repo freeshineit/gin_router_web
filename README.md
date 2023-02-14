@@ -13,8 +13,14 @@ golang >= 1.18
 # development
 go run main.go
 
+# run development
+# https://github.com/cosmtrek/air Live reload for Go apps
+air
+
 # build
 go build
+# or
+make build
 
 # run
 ./gin-router-web
