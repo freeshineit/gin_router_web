@@ -10,7 +10,7 @@ import (
 // router [/]
 func WebIndex(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"title": "this is title",
+		"title": "Gin Router Web",
 	})
 }
 

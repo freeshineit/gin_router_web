@@ -1,4 +1,4 @@
-package models
+package helper
 
 // ResponseResult response result
 type ResponseResult[T any] struct {

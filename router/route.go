@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"gin-router-web/api"
-	"gin-router-web/models"
+	"gin-router-web/helper"
 
 	"github.com/gin-gonic/gin"
 )
@@ -62,7 +62,7 @@ func SetupRoutes() *gin.Engine {
 			message := c.Query("message")
 			nick := c.DefaultQuery("nick", "anonymous")
 
-			c.JSON(http.StatusOK, models.BuildResponse(http.StatusOK, "success", gin.H{
+			c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", gin.H{
 				message: message,
 				nick:    nick,
 			}))
