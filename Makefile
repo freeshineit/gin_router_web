@@ -29,3 +29,8 @@ build:
 clean:
 	$(GOCLEAN)
 	@rm -f $(BINARY)
+
+deploy:
+	docker build -t gin_router_web:latest .
+# docker network create my_net
+	docker-compose up -d

@@ -1,11 +1,9 @@
 version: "3"
 services:
   golang:
-    build:
-      context: ./
+    container_name: gin_router_web_service
+    image: gin_router_web:latest
+        # 端口映射
     ports:
-      - "8080:8080"
-    volumes:
-      - $HOME/code/go:/go
-    container_name: gin_router_web
+      - 8080:8080
     tty: true   
