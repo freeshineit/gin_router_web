@@ -1,6 +1,7 @@
 package api
 
 import (
+	"gin-router-web/helper"
 	"gin-router-web/models"
 	"log"
 	"net/http"
@@ -25,7 +26,7 @@ func FormPost(c *gin.Context) {
 	// user := &User{}
 	// c.ShouldBind(user)
 
-	c.JSON(http.StatusOK, models.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
 }
 
 // UrlencodedPost application/x-www-form-urlencoded
@@ -48,18 +49,18 @@ func UrlencodedPost(c *gin.Context) {
 
 	log.Printf("request query limit: %s\n", limit)
 
-	c.JSON(http.StatusOK, models.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
 }
 
 // JSONPost json
 func JSONPost(c *gin.Context) {
 	var user models.User
 	if err := c.BindJSON(&user); err != nil {
-		c.AbortWithStatusJSON(http.StatusOK, models.BuildResponse[any](http.StatusBadRequest, "fail", nil))
+		c.AbortWithStatusJSON(http.StatusBadRequest, helper.BuildResponse[any](http.StatusBadRequest, "invalid parameter", nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, models.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
 }
 
 // JSONAndFormPost  application/json  application/x-www-form-urlencoded
@@ -67,11 +68,11 @@ func JSONAndFormPost(c *gin.Context) {
 	var user models.User
 
 	if err := c.ShouldBind(&user); err != nil {
-		c.AbortWithStatusJSON(http.StatusOK, models.BuildResponse[any](http.StatusBadRequest, "fail", nil))
+		c.AbortWithStatusJSON(http.StatusBadRequest, helper.BuildResponse[any](http.StatusBadRequest, "invalid parameter", nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, models.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
 }
 
 // XMLPost xml
@@ -81,9 +82,9 @@ func XMLPost(c *gin.Context) {
 	// c.ShouldBind(&user)
 	// c.Bind(&user)
 	if err := c.BindXML(&user); err != nil {
-		c.AbortWithStatusJSON(http.StatusOK, models.BuildResponse[any](http.StatusBadRequest, "fail", nil))
+		c.AbortWithStatusJSON(http.StatusOK, helper.BuildResponse[any](http.StatusBadRequest, "invalid parameter", nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, models.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
 }

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"gin-router-web/helper"
 	"gin-router-web/models"
 	"io/ioutil"
 	"log"
@@ -47,7 +48,7 @@ func FileUpload(c *gin.Context) {
 		filesURL = append(filesURL, "upload/"+file.Filename)
 	}
 
-	c.JSON(http.StatusOK, models.BuildResponse(http.StatusOK, "success", gin.H{
+	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", gin.H{
 		"urls": filesURL,
 	}))
 }
@@ -92,7 +93,7 @@ func FileChunkUpload(c *gin.Context) {
 
 	if chunkFile.Chunk+1 == chunkFile.Chunks {
 		c.JSON(http.StatusOK,
-			models.BuildResponse(http.StatusOK, "success", gin.H{"url": "/" + filePath}),
+			helper.BuildResponse(http.StatusOK, "success", gin.H{"url": "/" + filePath}),
 		)
 	} else {
 		contentType := strings.Split(c.GetHeader("Content-Type"), "boundary=")
