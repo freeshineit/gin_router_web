@@ -1,20 +1,9 @@
-# syntax=docker/dockerfile:1
-
 FROM golang:1.19
-
-WORKDIR /
-
-COPY go.mod ./
-COPY go.sum ./
-COPY controllers ./controllers
-COPY public ./public
-COPY router ./router
-COPY serialize ./serialize
-COPY main.go ./
-COPY views ./views
-
-RUN go build -o gin_router_web
-
+RUN mkdir -p /usr/app
+WORKDIR /usr/app
+COPY . /usr/app
+ENV GOPROXY="https://goproxy.io"
+ENV GIN_MODE=release
+RUN make build
 EXPOSE 8080
-
-CMD [ "/gin_router_web"]
+ENTRYPOINT ./bin/app 

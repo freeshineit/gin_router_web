@@ -22,7 +22,8 @@ go build
 # or
 make build
 
-# run
+# run production
+# export GIN_MODE=release
 ./gin-router-web
 
 # server 8080
@@ -30,8 +31,8 @@ http://localhost:8080/
 # file chunk upload
 http://localhost:8080/upload_chunks
 
-# docker
-docker-compose up -d
+# docker deploy
+make serve
 ```
 
 ## API
