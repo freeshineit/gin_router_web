@@ -83,7 +83,7 @@ api := r.Group("/api")
 		message := c.Query("message")
 		nick := c.DefaultQuery("nick", "anonymous")
 
-    c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", gin.H{
+    c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", gin.H{
       message: message,
       nick:    nick,
     }))
@@ -134,7 +134,7 @@ func FormPost(c *gin.Context) {
 	// user := &User{}
 	// c.ShouldBind(user)
 
-	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
 }
 ```
 
@@ -167,11 +167,11 @@ gin 路由实现
 func JSONPost(c *gin.Context) {
 	var user User
 	if err := c.BindJSON(&user); err != nil {
-		c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusBadRequest, "fail", nil))
+		c.AbortWithStatusJSON(http.StatusOK, helper.BuildResponse(http.StatusBadRequest, "invalid parameter", nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
 }
 ```
 
@@ -216,7 +216,7 @@ func UrlencodedPost(c *gin.Context) {
 
 	log.Printf("request query limit: %s\n", limit)
 
-	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
 }
 ```
 
@@ -246,11 +246,11 @@ func JSONAndFormPost(c *gin.Context) {
 	var user User
 
 	if err := c.ShouldBind(&user); err != nil {
-		c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusBadRequest, "fail", nil))
+		c.AbortWithStatusJSON(http.StatusOK, helper.BuildResponse(http.StatusBadRequest, "invalid parameter", nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
 }
 ```
 
@@ -298,11 +298,11 @@ func XMLPost(c *gin.Context) {
 	// c.ShouldBind(&user)
 	// c.Bind(&user)
 	if err := c.BindXML(&user); err != nil {
-		c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusBadRequest, "fail", nil))
+		c.AbortWithStatusJSON(http.StatusOK, helper.BuildResponse(http.StatusBadRequest, "invalid parameter", nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, serialize.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
 }
 ```
 
