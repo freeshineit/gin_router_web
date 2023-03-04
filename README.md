@@ -84,7 +84,7 @@ api := r.Group("/api")
 		message := c.Query("message")
 		nick := c.DefaultQuery("nick", "anonymous")
 
-    c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", gin.H{
+    c.JSON(http.StatusOK, helper.BuildResponse(gin.H{
       message: message,
       nick:    nick,
     }))
@@ -135,7 +135,7 @@ func FormPost(c *gin.Context) {
 	// user := &User{}
 	// c.ShouldBind(user)
 
-	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(user))
 }
 ```
 
@@ -168,11 +168,11 @@ gin 路由实现
 func JSONPost(c *gin.Context) {
 	var user User
 	if err := c.BindJSON(&user); err != nil {
-		c.AbortWithStatusJSON(http.StatusOK, helper.BuildResponse(http.StatusBadRequest, "invalid parameter", nil))
+		c.AbortWithStatusJSON(http.StatusOK, helper.BuildErrorResponse(http.StatusBadRequest, "invalid parameter"))
 		return
 	}
 
-	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(user))
 }
 ```
 
@@ -217,7 +217,7 @@ func UrlencodedPost(c *gin.Context) {
 
 	log.Printf("request query limit: %s\n", limit)
 
-	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(user))
 }
 ```
 
@@ -247,11 +247,11 @@ func JSONAndFormPost(c *gin.Context) {
 	var user User
 
 	if err := c.ShouldBind(&user); err != nil {
-		c.AbortWithStatusJSON(http.StatusOK, helper.BuildResponse(http.StatusBadRequest, "invalid parameter", nil))
+		c.AbortWithStatusJSON(http.StatusOK, helper.BuildErrorResponse(http.StatusBadRequest, "invalid parameter"))
 		return
 	}
 
-	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(user))
 }
 ```
 
@@ -299,11 +299,11 @@ func XMLPost(c *gin.Context) {
 	// c.ShouldBind(&user)
 	// c.Bind(&user)
 	if err := c.BindXML(&user); err != nil {
-		c.AbortWithStatusJSON(http.StatusOK, helper.BuildResponse(http.StatusBadRequest, "invalid parameter", nil))
+		c.AbortWithStatusJSON(http.StatusOK, helper.BuildErrorResponse(http.StatusBadRequest, "invalid parameter"))
 		return
 	}
 
-	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(user))
 }
 ```
 
@@ -355,7 +355,7 @@ func fileUpload(c *gin.Context) {
 		filesUrl = append(filesUrl, "upload/"+file.Filename)
 	}
 
-	c.JSON(http.StatusOK, models.BuildResponse(http.StatusOK, "success", gin.H{
+	c.JSON(http.StatusOK, models.BuildResponse(gin.H{
 		"urls": filesURL,
 	}))
 }
@@ -546,6 +546,6 @@ uploader.bind("ChunkUploaded", function (up, file, info) {
 uploader.init();
 ```
 
-[客户端文件上传完整代码](https://github.com/freeshineit/gin_rotuer_web/blob/master/views/upload_chunks.html)
+[客户端文件上传完整代码](https://github.com/freeshineit/gin_rotuer_web/blob/master/templates/upload_chunks.html)
 
 [demo](https://github.com/freeshineit/gin_rotuer_web)
