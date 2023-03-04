@@ -11,7 +11,7 @@ import (
 
 func setStaticFS(r *gin.Engine) {
 	// set html template
-	r.LoadHTMLGlob("./views/*.html")
+	r.LoadHTMLGlob("./templates/*.html")
 
 	// set server static
 	r.StaticFile("favicon.ico", "./public/favicon.ico")
@@ -62,7 +62,7 @@ func SetupRoutes() *gin.Engine {
 			message := c.Query("message")
 			nick := c.DefaultQuery("nick", "anonymous")
 
-			c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", gin.H{
+			c.JSON(http.StatusOK, helper.BuildResponse(gin.H{
 				message: message,
 				nick:    nick,
 			}))
