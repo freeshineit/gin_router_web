@@ -26,7 +26,7 @@ func FormPost(c *gin.Context) {
 	// user := &User{}
 	// c.ShouldBind(user)
 
-	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(user))
 }
 
 // UrlencodedPost application/x-www-form-urlencoded
@@ -49,18 +49,18 @@ func UrlencodedPost(c *gin.Context) {
 
 	log.Printf("request query limit: %s\n", limit)
 
-	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(user))
 }
 
 // JSONPost json
 func JSONPost(c *gin.Context) {
 	var user models.User
 	if err := c.BindJSON(&user); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, helper.BuildResponse[any](http.StatusBadRequest, "invalid parameter", nil))
+		c.AbortWithStatusJSON(http.StatusBadRequest, helper.BuildErrorResponse[any](http.StatusBadRequest, "invalid parameter"))
 		return
 	}
 
-	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(user))
 }
 
 // JSONAndFormPost  application/json  application/x-www-form-urlencoded
@@ -68,11 +68,11 @@ func JSONAndFormPost(c *gin.Context) {
 	var user models.User
 
 	if err := c.ShouldBind(&user); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, helper.BuildResponse[any](http.StatusBadRequest, "invalid parameter", nil))
+		c.AbortWithStatusJSON(http.StatusBadRequest, helper.BuildErrorResponse[any](http.StatusBadRequest, "invalid parameter"))
 		return
 	}
 
-	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(user))
 }
 
 // XMLPost xml
@@ -82,9 +82,9 @@ func XMLPost(c *gin.Context) {
 	// c.ShouldBind(&user)
 	// c.Bind(&user)
 	if err := c.BindXML(&user); err != nil {
-		c.AbortWithStatusJSON(http.StatusOK, helper.BuildResponse[any](http.StatusBadRequest, "invalid parameter", nil))
+		c.AbortWithStatusJSON(http.StatusOK, helper.BuildErrorResponse[any](http.StatusBadRequest, "invalid parameter"))
 		return
 	}
 
-	c.JSON(http.StatusOK, helper.BuildResponse(http.StatusOK, "success", user))
+	c.JSON(http.StatusOK, helper.BuildResponse(user))
 }
