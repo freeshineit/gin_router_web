@@ -113,11 +113,13 @@
 
   // 成功
   $(".query").on("click", function () {
+    var data = getFormValue();
     axios
       .get("/api/query", {
         params: {
-          message: "message",
-          nick: "ShineShao"
+          name: data.name,
+          message: data.message,
+          nick: data.nick
         }
       })
       .then((res) => {

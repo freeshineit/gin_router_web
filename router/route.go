@@ -44,8 +44,8 @@ func SetupRoutes() *gin.Engine {
 		apiGroup.POST("/json_post", api.JSONPost)
 
 		//url encode 提交
-		apiGroup.POST("/urlencoded_post", api.UrlencodedPost)
 
+		apiGroup.POST("/urlencoded_post", api.UrlencodedPost)
 		// 即支持json又支持form
 		apiGroup.POST("/json_and_form_post", api.JSONAndFormPost)
 
@@ -59,12 +59,14 @@ func SetupRoutes() *gin.Engine {
 		apiGroup.POST("/file_chunk_upload", api.FileChunkUpload)
 
 		apiGroup.GET("/query", func(c *gin.Context) {
+			name := c.Query("name")
 			message := c.Query("message")
 			nick := c.DefaultQuery("nick", "anonymous")
 
 			c.JSON(http.StatusOK, helper.BuildResponse(gin.H{
-				message: message,
-				nick:    nick,
+				"name":    name,
+				"message": message,
+				"nick":    nick,
 			}))
 		})
 	}
