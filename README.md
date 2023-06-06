@@ -90,9 +90,9 @@ api := r.Group("/api")
 	    nick := c.DefaultQuery("nick", "anonymous")
 
 	    c.JSON(http.StatusOK, helper.BuildResponse(gin.H{
-	         "name": name,
-		 "message": message,
-		 "nick":    nick,
+	      "name": name,
+		    "message": message,
+		    "nick":    nick,
 	    }))
 	})
 }
