@@ -10,8 +10,6 @@ OS := $(shell uname -s | awk '{print tolower($$0)}')
 
 BINARY = ./bin/app
 
-# 
-GOARCH = amd64
 
 LDFLAGS = -ldflags="$$(govvv -flags)"
 
@@ -24,7 +22,7 @@ lint:
 	golint
 
 build:
-	env CGO_ENABLED=0 GOOS=$(OS) GOARCH=$(GOARCH) GIN_MODE=release  $(GOBUILD) -o $(BINARY) ./main.go
+	env CGO_ENABLED=0 GOOS=$(OS) GIN_MODE=release  $(GOBUILD) -o $(BINARY) ./main.go
 
 clean:
 	$(GOCLEAN)

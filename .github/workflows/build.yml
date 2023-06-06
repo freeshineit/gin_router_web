@@ -28,4 +28,4 @@ jobs:
       #   run: make test
 
       - name: Build
-        run: go build
+        run: make all
