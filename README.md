@@ -7,6 +7,7 @@
 golang >= 1.18
 
 
+
 ## 使用
 
 ```bash
@@ -33,6 +34,9 @@ http://localhost:8080/upload_chunks
 
 # docker deploy
 make serve
+
+##
+go mod tidy
 ```
 
 ## API
