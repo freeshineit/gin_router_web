@@ -85,13 +85,15 @@ api := r.Group("/api")
 	api.POST("/file_upload", fileUpload)
 
 	api.GET("/list", func(c *gin.Context) {
-		message := c.Query("message")
-		nick := c.DefaultQuery("nick", "anonymous")
+	    name := c.Query("name")
+	    message := c.Query("message")
+	    nick := c.DefaultQuery("nick", "anonymous")
 
-    c.JSON(http.StatusOK, helper.BuildResponse(gin.H{
-      message: message,
-      nick:    nick,
-    }))
+	    c.JSON(http.StatusOK, helper.BuildResponse(gin.H{
+	         "name": name,
+		 "message": message,
+		 "nick":    nick,
+	    }))
 	})
 }
 
