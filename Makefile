@@ -31,4 +31,5 @@ clean:
 deploy:
 	docker build -t gin_router_web:latest .
 # docker network create my_net
-	docker-compose up -d
+# docker-compose up -d
+	docker compose up -d
