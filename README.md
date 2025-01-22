@@ -20,12 +20,13 @@ air
 
 # build
 go build
-# or
-make build
 
 # run production
 # export GIN_MODE=release
 ./gin-router-web
+
+# make build  ./bin/app
+make build
 
 # server 8080
 http://localhost:8080/
@@ -41,14 +42,14 @@ go mod tidy
 
 ## API
 ```md
-[POST]   /api/form_post          
-[POST]   /api/json_post          
-[POST]   /api/urlencoded_post    
-[POST]   /api/json_and_form_post 
-[POST]   /api/xml_post           
-[POST]   /api/file_upload        
-[POST]   /api/file_chunk_upload  
-[GET]    /api/query              
+[POST]   /api/form_post
+[POST]   /api/json_post
+[POST]   /api/urlencoded_post
+[POST]   /api/json_and_form_post
+[POST]   /api/xml_post
+[POST]   /api/file_upload
+[POST]   /api/file_chunk_upload
+[GET]    /api/query
 ```
 
 ## 静态资源配置
