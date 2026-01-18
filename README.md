@@ -44,7 +44,7 @@ http://localhost:8080/
 http://localhost:8080/upload_chunks
 
 # docker deploy
-make serve
+make deploy
 
 # dependency management
 go mod tidy
