@@ -11,7 +11,7 @@
 - 前端与后端交互示例
 
 **技术栈：**
-- Go >= 1.18
+- Go >= 1.23
 - Gin Web Framework v1.9.1
 - 支持 Docker 部署
 
@@ -129,7 +129,7 @@ gin_router_web/
 ## 快速开始
 
 ### 环境要求
-- Go >= 1.18
+- Go >= 1.23
 - (可选) Docker & Docker Compose 用于容器化部署
 
 ### 本地运行
